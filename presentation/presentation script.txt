@@ -1,0 +1,31 @@
+Part 1: Project Context and Initial Data Insights (7 min)
+- Introduction to the Project: Objectives, societal significance, and long-term goals of analyzing road accident data in France.
+- Dataset and Scope: Details about the dataset (sources, years considered, key variables) and decision to focus on data from 2019-2022.
+- Preliminary Insights:
+  - Summary of accident distribution (severity levels, temporal trends).
+  - Key variables like lighting, speed, and user demographics.
+  - Visualizations and early patterns (e.g., rural vs. urban accident trends, impact of safety equipment).
+
+ Part 2: Data Preprocessing and Feature Engineering (7 min)
+- Data Cleaning:
+  - Handling missing and inconsistent values.
+  - Outlier treatment and dataset merging (e.g., combining accident, vehicle, and user data).
+- Feature Transformation:
+  - Encoding techniques for categorical data.
+  - Cyclical encoding for temporal variables.
+  - Latitude/longitude standardization.
+- Preprocessed Dataset Insights:
+  - Examples of improved dataset structure and readiness for modeling.
+  - Insights gained from exploratory statistics after cleaning.
+
+ Part 3: Modeling, Results, and Future Work (7 min)
+- Modeling Process:
+  - Overview of machine learning approaches (Random Forest, XGBoost, etc.).
+  - Steps for training, validation, and hyperparameter tuning.
+- Performance Summary:
+  - Simplified results highlighting model accuracy for different severity classes.
+  - Challenges with imbalanced classes and model limitations.
+- Practical Implications and Next Steps:
+  - Policy recommendations based on findings (e.g., speed regulation, infrastructure improvements).
+  - Suggestions for improving model precision (e.g., advanced balancing, feature engineering).
+  - Future modeling plans (e.g., ensemble methods, real-time prediction systems).
