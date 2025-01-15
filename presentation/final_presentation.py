@@ -3,39 +3,45 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
-
-def add_sidebar_style():
-    sidebar_style = 
-        <style>
-        [data-testid="stSidebar"] {
-            background-color: #E8F1FA; /
-        }
-        </style>
-    
-    st.markdown(sidebar_style, unsafe_allow_html=True)
+import os
 
 def main():
     st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
-    add_sidebar_style()
 
-    # Main Page Content
-    st.image("/road_accidents_France.png", use_column_width=False, width=300)
-    st.title("Historic Road Accidents in France – A Study")
-    st.markdown("### Authors:")
-    st.markdown("- **Carlos Natale**")
-    st.markdown("- **Stephen Waller**")
-    st.markdown("- **Ehsan Jafari**")
+    # Custom Sidebar Style
+    sidebar_style = """
+    <style>
+        [data-testid="stSidebar"] {
+            background-color: #f4f4f4;
+            border-right: 1px solid #ddd;
+        }
+        [data-testid="stSidebar"] h2 {
+            color: #333;
+        }
+        .sidebar-content {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+    </style>
+    """
+    st.markdown(sidebar_style, unsafe_allow_html=True)
 
-    st.write("This project provides an in-depth analysis of road accidents in France, combining data preprocessing, modeling, and interpretative insights to improve road safety. Use the navigation panel to explore the project.")
+    # Display Image in Sidebar
+    image_path = "road_accidents_France.png"
+    with st.sidebar:
+        if os.path.exists(image_path):
+            st.image(image_path, use_column_width=True)
+        else:
+            st.error("Image file 'road_accidents_France.png' not found. Please ensure it is in the correct location.")
 
-    # Sidebar Navigation
-    st.sidebar.title("Navigation")
-    sections = [
-        "Part 1: Project Context and Initial Data Insights",
-        "Part 2: Data Preprocessing and Feature Engineering",
-        "Part 3: Modeling, Results, and Future Work"
-    ]
-    choice = st.sidebar.radio("Go to:", sections)
+        st.title("Navigation")
+        sections = [
+            "Part 1: Project Context and Initial Data Insights",
+            "Part 2: Data Preprocessing and Feature Engineering",
+            "Part 3: Modeling, Results, and Future Work"
+        ]
+        choice = st.radio("Go to:", sections)
 
     # Section Content
     if choice == "Part 1: Project Context and Initial Data Insights":
