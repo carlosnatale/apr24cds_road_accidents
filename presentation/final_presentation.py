@@ -4,10 +4,22 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 
+def add_sidebar_style():
+    sidebar_style = 
+        <style>
+        [data-testid="stSidebar"] {
+            background-color: #E8F1FA; /
+        }
+        </style>
+    
+    st.markdown(sidebar_style, unsafe_allow_html=True)
+
 def main():
     st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
+    add_sidebar_style()
 
     # Main Page Content
+    st.image("/road_accidents_France.png", use_column_width=False, width=300)
     st.title("Historic Road Accidents in France – A Study")
     st.markdown("### Authors:")
     st.markdown("- **Carlos Natale**")
