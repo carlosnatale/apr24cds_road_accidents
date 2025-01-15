@@ -37,7 +37,7 @@ def main():
 
         st.title("Navigation")
         sections = [
-            "Part 0: Cover Page",
+            "Cover Page",
             "Part 1: Project Context and Initial Data Insights",
             "Part 2: Data Preprocessing and Feature Engineering",
             "Part 3: Modeling, Results, and Future Work"
