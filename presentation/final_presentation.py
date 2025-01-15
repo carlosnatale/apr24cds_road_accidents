@@ -45,7 +45,7 @@ def main():
         choice = st.radio("Go to:", sections)
 
     # Section Content
-    if choice == "Part 0: Cover Page":
+    if choice == "Cover Page":
         part_0()
     elif choice == "Part 1: Project Context and Initial Data Insights":
         part_1()
