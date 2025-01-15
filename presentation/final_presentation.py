@@ -37,6 +37,7 @@ def main():
 
         st.title("Navigation")
         sections = [
+            "Part 0: Cover Page",
             "Part 1: Project Context and Initial Data Insights",
             "Part 2: Data Preprocessing and Feature Engineering",
             "Part 3: Modeling, Results, and Future Work"
@@ -44,12 +45,25 @@ def main():
         choice = st.radio("Go to:", sections)
 
     # Section Content
-    if choice == "Part 1: Project Context and Initial Data Insights":
+    if choice == "Part 0: Cover Page":
+        part_0()
+    elif choice == "Part 1: Project Context and Initial Data Insights":
         part_1()
     elif choice == "Part 2: Data Preprocessing and Feature Engineering":
         part_2()
     elif choice == "Part 3: Modeling, Results, and Future Work":
         part_3()
+
+def part_0():
+    st.title("Historic Road Accidents in France – A Study")
+
+    st.header("Authors")
+    st.markdown("- [Carlos Natale](https://github.com/carlosnatale)")
+    st.markdown("- [Ehsan Jafari](https://github.com/Ehsanjafari1993)")
+    st.markdown("- [Stephen Waller](https://github.com/StephenWaller87)")
+
+    st.header("Mentor")
+    st.markdown("- [Manon Georget](https://github.com/manongeorget)")
 
 def part_1():
     st.header("Part 1: Project Context and Initial Data Insights")
