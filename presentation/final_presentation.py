@@ -216,23 +216,22 @@ def part_3():
     st.subheader("SHAP Summary Plot")
 
     # Replace synthetic data with actual dataset
-    # Example data: Replace 'your_features' and 'your_target' with actual dataset variables
     feature_names = ["Speed", "Road Type", "Lighting Conditions", "Weather", "Vehicle Age"]
     X = pd.DataFrame(np.random.rand(100, 5), columns=feature_names)
     y = np.random.randint(0, 2, 100)
 
-    #    # SHAP values
+    # Train the model
+    model = RandomForestClassifier(random_state=42)
+    model.fit(X, y)
+
+    # SHAP values
     explainer = shap.Explainer(model, X)
     shap_values = explainer(X)
 
-    # Ensure SHAP has the correct feature names
-    shap_values_df = pd.DataFrame(shap_values.values, columns=feature_names)
-
     # Generate SHAP summary plot
     fig, ax = plt.subplots(figsize=(10, 6))
-    shap.summary_plot(shap_values, X, plot_type="bar", feature_names=feature_names, show=False)
+    shap.summary_plot(shap_values.values, X, plot_type="bar", show=False)
     st.pyplot(fig)
-
 
     # Subsection: Practical Implications and Next Steps
     st.subheader("Practical Implications and Next Steps")
