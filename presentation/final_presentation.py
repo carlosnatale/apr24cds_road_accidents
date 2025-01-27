@@ -156,6 +156,37 @@ def part_2():
     st.write("- Features: xxxx")
     st.write("vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.")
 
+import streamlit as st
+import plotly.express as px
+import plotly.graph_objects as go
+import numpy as np
+import pandas as pd
+import shap
+import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+
+def main():
+    st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
+
+    # Sidebar Navigation
+    st.sidebar.title("Navigation")
+    sections = [
+        "Cover Page",
+        "Part 1: Project Context and Initial Data Insights",
+        "Part 2: Data Preprocessing and Feature Engineering",
+        "Part 3: Modeling, Results, and Future Work"
+    ]
+    choice = st.sidebar.radio("Go to:", sections)
+
+    if choice == "Cover Page":
+        part_0()
+    elif choice == "Part 1: Project Context and Initial Data Insights":
+        part_1()
+    elif choice == "Part 2: Data Preprocessing and Feature Engineering":
+        part_2()
+    elif choice == "Part 3: Modeling, Results, and Future Work":
+        part_3()
+
 def part_3():
     st.header("Part 3: Modeling, Results, and Future Work")
 
@@ -236,9 +267,10 @@ def part_3():
     explainer = shap.Explainer(model, X)
     shap_values = explainer(X)
 
-    # Generate SHAP bar plot
+    # Generate SHAP summary plot
     st.markdown("### SHAP Feature Importance")
-    fig = shap.plots.bar(shap_values, show=False)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    shap.summary_plot(shap_values.values, X.values, feature_names=feature_names, plot_type="bar", show=False)
     st.pyplot(fig)
 
     # Practical Implications and Future Work
