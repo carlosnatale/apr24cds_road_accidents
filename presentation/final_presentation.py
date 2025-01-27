@@ -156,7 +156,8 @@ def part_2():
     st.write("- Features: xxxx")
     st.write("vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.")
 
-st.header("Part 3: Modeling, Results, and Future Work")
+def part_3():
+    st.header("Part 3: Modeling, Results, and Future Work")
 
     # Subsection: Modeling Process
     st.subheader("Modeling Process")
@@ -246,6 +247,6 @@ st.header("Part 3: Modeling, Results, and Future Work")
       2. Expand the dataset with more recent data.
       3. Conduct real-world testing of recommendations.
     """)
-    
+
 if __name__ == "__main__":
     main()
