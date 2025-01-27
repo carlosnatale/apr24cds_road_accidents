@@ -236,13 +236,10 @@ def part_3():
     explainer = shap.Explainer(model, X)
     shap_values = explainer(X)
 
-    # Save SHAP summary plot to file
-    shap.summary_plot(shap_values, X, plot_type="bar", show=False)
-    plt.savefig("shap_summary_plot.png")  # Save the plot
-    plt.close()
-
-    # Display the saved SHAP plot in Streamlit
-    st.image("shap_summary_plot.png", caption="SHAP Summary Plot", use_column_width=True)
+    # Generate SHAP bar plot
+    st.markdown("### SHAP Feature Importance")
+    fig = shap.plots.bar(shap_values, show=False)
+    st.pyplot(fig)
 
     # Practical Implications and Future Work
     st.subheader("Recommendations and Next Steps")
