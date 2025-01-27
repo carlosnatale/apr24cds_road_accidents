@@ -32,7 +32,9 @@ def main():
     image_path = "road_accidents_France.png"
     with st.sidebar:
         if os.path.exists(image_path):
-            st.image(image_path, use_container_width=True)
+            if os.path.exists(image_path):
+                st.image(image_path)
+
 
         else:
             st.error("Image file 'road_accidents_France.png' not found. Please ensure it is in the correct location.")
