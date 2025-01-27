@@ -230,7 +230,7 @@ def part_3():
 
     # Generate SHAP summary plot
     fig, ax = plt.subplots(figsize=(10, 6))
-    shap.summary_plot(shap_values.values, X, plot_type="bar", show=False)
+    shap.summary_plot(shap_values, X, plot_type="bar", feature_names=feature_names, show=False)
     st.pyplot(fig)
 
     # Subsection: Practical Implications and Next Steps
