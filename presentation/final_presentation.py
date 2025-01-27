@@ -236,10 +236,13 @@ def part_3():
     explainer = shap.Explainer(model, X)
     shap_values = explainer(X)
 
-    # SHAP summary plot
-    fig, ax = plt.subplots(figsize=(10, 6))
-    shap.summary_plot(shap_values.values, X.values, feature_names=X.columns, plot_type="bar", show=False)
-    st.pyplot(fig)
+    # Save SHAP summary plot to file
+    shap.summary_plot(shap_values, X, plot_type="bar", show=False)
+    plt.savefig("shap_summary_plot.png")  # Save the plot
+    plt.close()
+
+    # Display the saved SHAP plot in Streamlit
+    st.image("shap_summary_plot.png", caption="SHAP Summary Plot", use_column_width=True)
 
     # Practical Implications and Future Work
     st.subheader("Recommendations and Next Steps")
