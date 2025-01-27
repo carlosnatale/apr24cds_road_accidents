@@ -215,8 +215,13 @@ def part_3():
     # Generate SHAP Summary Plot Dynamically
     st.subheader("SHAP Summary Plot")
 
-    # Example data and model
-    X, y = make_classification(n_samples=1000, n_features=5, random_state=42)
+    # Replace synthetic data with actual dataset
+    # Example data: Replace 'your_features' and 'your_target' with actual dataset variables
+    feature_names = ["Speed", "Road Type", "Lighting Conditions", "Weather", "Vehicle Age"]
+    X = pd.DataFrame(np.random.rand(100, 5), columns=feature_names)
+    y = np.random.randint(0, 2, 100)
+
+    # Train the model
     model = RandomForestClassifier(random_state=42)
     model.fit(X, y)
 
