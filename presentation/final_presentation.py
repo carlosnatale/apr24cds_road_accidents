@@ -238,7 +238,7 @@ def part_3():
 
     # SHAP summary plot
     fig, ax = plt.subplots(figsize=(10, 6))
-    shap.summary_plot(shap_values, X, plot_type="bar", show=False)
+    shap.summary_plot(shap_values.values, X.values, feature_names=X.columns, plot_type="bar", show=False)
     st.pyplot(fig)
 
     # Practical Implications and Future Work
