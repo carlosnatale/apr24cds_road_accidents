@@ -7,6 +7,7 @@ import shap
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import make_classification
+import os
 
 def main():
     st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
@@ -225,7 +226,7 @@ def part_3():
 
     # Generate SHAP summary plot
     fig, ax = plt.subplots(figsize=(10, 6))
-    shap.summary_plot(shap_values, X, plot_type="bar", show=False)
+    shap.summary_plot(shap_values, X, plot_type="bar", show=False, ax=ax)
     st.pyplot(fig)
 
     # Subsection: Practical Implications and Next Steps
@@ -246,7 +247,6 @@ def part_3():
       2. Expand the dataset with more recent data.
       3. Conduct real-world testing of recommendations.
     """)
-
-
+    
 if __name__ == "__main__":
     main()
