@@ -1,10 +1,12 @@
 import streamlit as st
 import plotly.express as px
-import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
-import os
+import shap
+import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import make_classification
 
 def main():
     st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
