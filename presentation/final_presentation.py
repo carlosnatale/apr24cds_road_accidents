@@ -32,7 +32,8 @@ def main():
     image_path = "road_accidents_France.png"
     with st.sidebar:
         if os.path.exists(image_path):
-            st.image(image_path, use_column_width=True)
+            st.image(image_path, use_container_width=True)
+
         else:
             st.error("Image file 'road_accidents_France.png' not found. Please ensure it is in the correct location.")
 
@@ -206,8 +207,22 @@ def part_3():
       SHAP values were used to explain model predictions, highlighting the influence of features like speed and road type.
     """)
 
-    # SHAP Summary Plot Placeholder
-    st.image("shap_summary_plot.png", caption="SHAP Summary Plot")
+    # Generate SHAP Summary Plot Dynamically
+    st.subheader("SHAP Summary Plot")
+
+    # Example data and model
+    X, y = make_classification(n_samples=1000, n_features=5, random_state=42)
+    model = RandomForestClassifier(random_state=42)
+    model.fit(X, y)
+
+    # SHAP values
+    explainer = shap.Explainer(model, X)
+    shap_values = explainer(X)
+
+    # Generate SHAP summary plot
+    fig, ax = plt.subplots(figsize=(10, 6))
+    shap.summary_plot(shap_values, X, plot_type="bar", show=False)
+    st.pyplot(fig)
 
     # Subsection: Practical Implications and Next Steps
     st.subheader("Practical Implications and Next Steps")
