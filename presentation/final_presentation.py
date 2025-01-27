@@ -156,8 +156,7 @@ def part_2():
     st.write("- Features: xxxx")
     st.write("vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.")
 
-def part_3():
-    st.header("Part 3: Modeling, Results, and Future Work")
+st.header("Part 3: Modeling, Results, and Future Work")
 
     # Subsection: Modeling Process
     st.subheader("Modeling Process")
@@ -226,7 +225,7 @@ def part_3():
 
     # Generate SHAP summary plot
     fig, ax = plt.subplots(figsize=(10, 6))
-    shap.summary_plot(shap_values, X, plot_type="bar", show=False, ax=ax)
+    shap.summary_plot(shap_values, X, plot_type="bar", show=False)
     st.pyplot(fig)
 
     # Subsection: Practical Implications and Next Steps
