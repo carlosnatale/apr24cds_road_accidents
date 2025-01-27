@@ -270,7 +270,7 @@ def part_3():
     # Generate SHAP summary plot
     st.markdown("### SHAP Feature Importance")
     fig, ax = plt.subplots(figsize=(10, 6))
-    shap.summary_plot(shap_values.values, X.values, feature_names=feature_names, plot_type="bar", show=False)
+    shap.summary_plot(shap_values.values, X.values, feature_names=X.columns.tolist(), plot_type="bar", show=False)
     st.pyplot(fig)
 
     # Practical Implications and Future Work
