@@ -242,15 +242,11 @@ def part_3():
     st.subheader("Local Explanation")
     st.write("The following SHAP values explain a specific prediction for an example instance.")
 
-    explanation = shap.Explanation(
-        values=shap_values_instance.values[0],
-        base_values=shap_values_instance.base_values[0],
-        data=example_instance[0],
+    fig4, ax4 = plt.subplots()
+    shap.waterfall_plot(
+        shap_values_instance[0],  # Select the first explanation (single instance)
         feature_names=feature_names
     )
-
-    fig4, ax4 = plt.subplots()
-    shap.waterfall_plot(explanation)  # Correctly use single explanation
     st.pyplot(fig4)
 
     st.subheader("3.4 Recommendations")
