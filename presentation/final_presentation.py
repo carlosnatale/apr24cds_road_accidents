@@ -243,10 +243,7 @@ def part_3():
     st.write("The following SHAP values explain a specific prediction for an example instance.")
 
     fig4, ax4 = plt.subplots()
-    shap.waterfall_plot(
-        shap_values_instance[0],  # Select the first explanation (single instance)
-        feature_names=feature_names
-    )
+    shap.waterfall_plot(shap_values_instance[0])  # Correctly use single explanation without extra arguments
     st.pyplot(fig4)
 
     st.subheader("3.4 Recommendations")
