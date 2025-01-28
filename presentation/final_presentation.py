@@ -247,7 +247,7 @@ def part_3():
     explainer = shap.Explainer(lambda x: x, np.random.rand(5, 5))  # Placeholder explainer
     shap_values_instance = explainer(example_instance)
     fig4, ax4 = plt.subplots()
-    shap.waterfall_plot(shap_values_instance[0], show=False)
+    shap.waterfall_plot(shap_values_instance.values[0], show=False)  # Correctly select the first explanation
     st.pyplot(fig4)
 
     st.subheader("3.4 Recommendations")
