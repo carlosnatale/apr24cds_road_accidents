@@ -230,30 +230,27 @@ def part_3():
     st.subheader("3.3 SHAP Analysis")
     st.write("SHAP (SHapley Additive exPlanations) values provide insights into how features influence model predictions globally and locally.")
 
-    shap_values = np.random.rand(100, 5)  # Simulated SHAP values
+    # Simulated SHAP values and feature names for demonstration
+    shap_values = np.random.rand(1, 5)  # Single instance SHAP values
     feature_names = ["Longitude", "Latitude", "Maximum Speed", "Safety Equipment", "Age"]
-
-    # SHAP Summary Plot
-    fig3, ax3 = plt.subplots()
-    shap.summary_plot(shap_values, feature_names=feature_names, show=False)
-    plt.title("SHAP Summary Plot")
-    st.pyplot(fig3)
 
     # Example Instance for Local Interpretation
     example_instance = np.random.rand(1, 5)
+    explainer = shap.Explainer(lambda x: x, np.random.rand(100, 5))  # Placeholder explainer
+    shap_values_instance = explainer(example_instance)
+
     st.subheader("Local Explanation")
     st.write("The following SHAP values explain a specific prediction for an example instance.")
 
-    explainer = shap.Explainer(lambda x: x, np.random.rand(5, 5))  # Placeholder explainer
-    shap_values_instance = explainer(example_instance)
     explanation = shap.Explanation(
         values=shap_values_instance.values[0],
         base_values=shap_values_instance.base_values[0],
-        data=example_instance,
+        data=example_instance[0],
         feature_names=feature_names
     )
+
     fig4, ax4 = plt.subplots()
-    shap.waterfall_plot(explanation, show=False)  # Correctly pass the Explanation object
+    shap.waterfall_plot(explanation)  # Correctly use single explanation
     st.pyplot(fig4)
 
     st.subheader("3.4 Recommendations")
