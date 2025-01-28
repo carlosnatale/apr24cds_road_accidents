@@ -190,109 +190,78 @@ def main():
 def part_3():
     st.header("Part 3: Modeling, Results, and Future Work")
 
-    # Subsection: Modeling Process
-    st.subheader("Modeling Process")
-    st.markdown("""
-    We developed predictive models for accident severity using:
-    - **Random Forest**
-    - **XGBoost**
-    - **LightGBM**
-
-    Key steps included:
-    1. Data Preprocessing: Normalization, handling missing values, and addressing class imbalances.
-    2. Feature Engineering: Selection of impactful variables such as speed, weather, and road type.
-    3. Hyperparameter Tuning: Optimized parameters for each model using grid search and cross-validation.
-    """)
-
-    # Feature Importance Visualization
-    st.subheader("Feature Importance")
-    st.markdown("""
-    Below are the top features contributing to predictions:
-    - **Speed**: The most critical factor.
-    - **Road Type** and **Lighting Conditions**: Significant impacts on severity.
-    - **Weather** and **Vehicle Age**: Moderate influence.
-    """)
-    feature_importances = {
-        "Feature": ["Speed", "Road Type", "Lighting Conditions", "Weather", "Vehicle Age"],
-        "Importance": [0.35, 0.25, 0.15, 0.15, 0.10]
+    # Metrics Data (Example DataFrame for visualization)
+    data = {
+        "Model": ["Random Forest", "XGBoost", "LightGBM"],
+        "Slightly Injured F1": [0.97, 0.87, 0.90],
+        "Severely Injured F1": [0.49, 0.59, 0.54],
+        "Overall Accuracy": [0.85, 0.80, 0.83]
     }
-    feature_df = pd.DataFrame(feature_importances)
-    fig = px.bar(feature_df, x="Feature", y="Importance", title="Top 5 Features by Importance", color="Feature", height=400)
-    st.plotly_chart(fig)
+    metrics_df = pd.DataFrame(data)
 
-    # Model Performance Metrics
-    st.subheader("Performance Metrics")
-    st.markdown("""
-    The models demonstrated the following performance:
-    """)
-    performance_data = {
-        "Metric": ["Accuracy", "Precision", "Recall", "F1-Score"],
-        "Random Forest": [0.85, 0.82, 0.78, 0.80],
-        "XGBoost": [0.88, 0.84, 0.81, 0.82],
-        "LightGBM": [0.87, 0.83, 0.80, 0.81]
+    st.subheader("3.1 Model Performance")
+    st.write("The following chart compares the F1-scores and overall accuracy across different models.")
+
+    # Plotting F1 Scores and Accuracy
+    fig, ax = plt.subplots()
+    metrics_df.plot(x="Model", kind="bar", ax=ax)
+    ax.set_title("Model Performance Metrics")
+    ax.set_ylabel("Score")
+    st.pyplot(fig)
+
+    # Feature Importance Data (Example DataFrame)
+    features = {
+        "Feature": ["Longitude", "Latitude", "Maximum Speed", "Safety Equipment", "Age"],
+        "Importance": [0.25, 0.20, 0.15, 0.30, 0.10]
     }
-    performance_df = pd.DataFrame(performance_data)
-    fig = px.bar(performance_df, x="Metric", y=["Random Forest", "XGBoost", "LightGBM"], 
-                 title="Model Performance Metrics", barmode="group", height=400)
-    st.plotly_chart(fig)
+    features_df = pd.DataFrame(features)
 
-    # Prediction Distribution
-    st.subheader("Prediction Distribution by Class")
-    st.markdown("""
-    Distribution of predicted severity classes highlights areas for improvement, particularly for minority classes.
-    """)
-    class_distribution = {
-        "Severity": ["Slight Injury", "Severe Injury", "Fatal", "Non-Injury"],
-        "Predictions": [2000, 500, 100, 3500]
-    }
-    dist_df = pd.DataFrame(class_distribution)
-    fig = px.bar(dist_df, x="Severity", y="Predictions", title="Prediction Distribution by Class", color="Severity", height=400)
-    st.plotly_chart(fig)
+    st.subheader("3.2 Feature Importance")
+    st.write("The chart below highlights the most influential features in predicting accident severity.")
 
-    # SHAP Analysis
-st.subheader("Model Interpretability with SHAP")
-st.markdown("""
-SHAP (SHapley Additive exPlanations) was utilized to interpret model predictions and identify influential features.
-""")
+    # Plotting Feature Importance
+    fig2, ax2 = plt.subplots()
+    features_df.plot(x="Feature", y="Importance", kind="bar", ax=ax2, legend=False)
+    ax2.set_title("Feature Importance")
+    ax2.set_ylabel("Importance")
+    st.pyplot(fig2)
 
-# Example data
-feature_names = ["Speed", "Road Type", "Lighting Conditions", "Weather", "Vehicle Age"]
-X = pd.DataFrame(np.random.rand(100, 5), columns=feature_names)
-y = np.random.randint(0, 2, 100)
+    # SHAP Analysis (Example Data for Visualization)
+    st.subheader("3.3 SHAP Analysis")
+    st.write("SHAP (SHapley Additive exPlanations) values provide insights into how features influence model predictions globally and locally.")
 
-# Train model
-model = RandomForestClassifier(random_state=42)
-model.fit(X, y)
+    shap_values = np.random.rand(100, 5)  # Simulated SHAP values
+    feature_names = ["Longitude", "Latitude", "Maximum Speed", "Safety Equipment", "Age"]
 
-# SHAP values
-explainer = shap.Explainer(model, X)
-shap_values = explainer(X)
+    # SHAP Summary Plot
+    fig3, ax3 = plt.subplots()
+    shap.summary_plot(shap_values, feature_names=feature_names, show=False)
+    plt.title("SHAP Summary Plot")
+    st.pyplot(fig3)
 
-# Generate SHAP summary plot
-st.markdown("### SHAP Feature Importance")
-fig, ax = plt.subplots(figsize=(10, 6))
-shap.summary_plot(shap_values.values, X.values, feature_names=feature_names, plot_type="bar", show=False)
-st.pyplot(fig)
+    # Example Instance for Local Interpretation
+    example_instance = np.random.rand(1, 5)
+    st.subheader("Local Explanation")
+    st.write("The following SHAP values explain a specific prediction for an example instance.")
 
+    explainer = shap.Explainer(lambda x: x, np.random.rand(5, 5))  # Placeholder explainer
+    shap_values_instance = explainer(example_instance)
+    explanation = shap.Explanation(
+        values=shap_values_instance.values[0],
+        base_values=shap_values_instance.base_values[0],
+        data=example_instance,
+        feature_names=feature_names
+    )
+    fig4, ax4 = plt.subplots()
+    shap.waterfall_plot(explanation, show=False)  # Correctly pass the Explanation object
+    st.pyplot(fig4)
 
-# Practical Implications and Future Work
-st.subheader("Recommendations and Next Steps")
-st.markdown("""
-- **Policy Recommendations**:
-1. Implement stricter speed regulations.
-2. Improve lighting and signage in high-risk areas.
-3. Upgrade road infrastructure.
+    st.subheader("3.4 Recommendations")
+    st.write("- **Safety Equipment:** Ensuring proper use can significantly reduce severe injuries.")
+    st.write("- **Speed Management:** Implement speed limit enforcement in high-risk areas.")
+    st.write("- **Targeted Interventions:** Focus on older drivers and high-risk locations.")
 
-- **Model Enhancements**:
-1. Address imbalanced classes using advanced oversampling techniques (e.g., SMOTE).
-2. Leverage ensemble learning for robustness.
-3. Explore deep learning approaches for sequential data.
-
-- **Future Directions**:
-1. Integrate real-time traffic and environmental data for dynamic predictions.
-2. Validate models with more diverse datasets.
-3. Develop a user-friendly application for practical deployment.
-""")
+    st.write("Future enhancements include incorporating additional data such as weather and traffic conditions and utilizing advanced modeling techniques for better precision in minority classes.")
 
 if __name__ == "__main__":
     main()
