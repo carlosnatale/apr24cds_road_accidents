@@ -275,24 +275,24 @@ shap.summary_plot(shap_values.values, X.values, feature_names=feature_names, plo
 st.pyplot(fig)
 
 
-    # Practical Implications and Future Work
-    st.subheader("Recommendations and Next Steps")
-    st.markdown("""
-    - **Policy Recommendations**:
-      1. Implement stricter speed regulations.
-      2. Improve lighting and signage in high-risk areas.
-      3. Upgrade road infrastructure.
+# Practical Implications and Future Work
+st.subheader("Recommendations and Next Steps")
+st.markdown("""
+- **Policy Recommendations**:
+1. Implement stricter speed regulations.
+2. Improve lighting and signage in high-risk areas.
+3. Upgrade road infrastructure.
 
-    - **Model Enhancements**:
-      1. Address imbalanced classes using advanced oversampling techniques (e.g., SMOTE).
-      2. Leverage ensemble learning for robustness.
-      3. Explore deep learning approaches for sequential data.
+- **Model Enhancements**:
+1. Address imbalanced classes using advanced oversampling techniques (e.g., SMOTE).
+2. Leverage ensemble learning for robustness.
+3. Explore deep learning approaches for sequential data.
 
-    - **Future Directions**:
-      1. Integrate real-time traffic and environmental data for dynamic predictions.
-      2. Validate models with more diverse datasets.
-      3. Develop a user-friendly application for practical deployment.
-    """)
+- **Future Directions**:
+1. Integrate real-time traffic and environmental data for dynamic predictions.
+2. Validate models with more diverse datasets.
+3. Develop a user-friendly application for practical deployment.
+""")
 
 if __name__ == "__main__":
     main()
