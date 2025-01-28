@@ -233,17 +233,21 @@ def part_3():
     # Simulated SHAP values and feature names for demonstration
     shap_values = np.random.rand(1, 5)  # Single instance SHAP values
     feature_names = ["Longitude", "Latitude", "Maximum Speed", "Safety Equipment", "Age"]
+    example_instance = np.random.rand(1, 5)  # Example feature values
 
-    # Example Instance for Local Interpretation
-    example_instance = np.random.rand(1, 5)
-    explainer = shap.Explainer(lambda x: x, np.random.rand(100, 5))  # Placeholder explainer
-    shap_values_instance = explainer(example_instance)
+    # Create a SHAP Explanation object
+    explanation = shap.Explanation(
+        values=shap_values[0],  # SHAP values for the instance
+        base_values=np.mean(shap_values),  # Base value (e.g., mean prediction)
+        data=example_instance[0],  # Feature values for the instance
+        feature_names=feature_names  # Feature names
+    )
 
+    # Plot the waterfall plot
     st.subheader("Local Explanation")
     st.write("The following SHAP values explain a specific prediction for an example instance.")
-
     fig4, ax4 = plt.subplots()
-    shap.waterfall_plot(shap_values_instance[0])  # Correctly use single explanation without extra arguments
+    shap.waterfall_plot(explanation)
     st.pyplot(fig4)
 
     st.subheader("3.4 Recommendations")
@@ -252,6 +256,6 @@ def part_3():
     st.write("- **Targeted Interventions:** Focus on older drivers and high-risk locations.")
 
     st.write("Future enhancements include incorporating additional data such as weather and traffic conditions and utilizing advanced modeling techniques for better precision in minority classes.")
-
+    
 if __name__ == "__main__":
     main()
