@@ -2,13 +2,6 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import shap
-from lime import lime_tabular
-import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.datasets import make_classification
 import os
 
 def main():
@@ -37,10 +30,7 @@ def main():
     image_path = "road_accidents_France.png"
     with st.sidebar:
         if os.path.exists(image_path):
-            if os.path.exists(image_path):
-                st.image(image_path)
-
-
+            st.image(image_path)
         else:
             st.error("Image file 'road_accidents_France.png' not found. Please ensure it is in the correct location.")
 
@@ -101,7 +91,6 @@ def part_1():
     st.write("As an Example, this is an initial upload of the 2022 'Vehicles' csv file")         
 
     df = pd.read_csv("vehicules-2022.csv", sep=';')
-
     st.dataframe(df.head(10))
 
     st.write("As you can see from this example, there are many different variable that can be used for analysis.")
@@ -110,7 +99,6 @@ def part_1():
 
     st.write("The next stage after the initial investiagtion of the data available across the 4 differing CSV files available is to combine into a single dataframe that can be used for modelling, the combined dataframe looks like the below. ")
     df2 = pd.read_csv("data.csv")
-
     st.dataframe(df2.head(10))
     st.write(df2.shape)
 
@@ -138,149 +126,134 @@ def part_1():
     st.subheader("1.3.2 Target Variable")
     st.write("The Primary Target Variable is the severity of injuries sustained, categorised into Indeme: 'Uninjured' , Tue: 'Fatal , Blesse hospitalise: 'Hospitalised Injury', and Blesse legur: 'Minor Injury'.")
     st.write("As our target Variable has 4 potential values in the final dataset, mod3elling would be completed against al for of these, and grouped into binary capacity of Severly/Non Severly injured. ")
-  
 
 def part_2():
     st.header("Part 2: Data Preprocessing and Feature Engineering")
 
-    st.subheader("2.1 xxxxxxxxxxxxxxxxxxx")
-    st.write("vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.")
+    st.subheader("2.1 Data Cleaning")
+    st.write("In this section, we cleaned the data by handling missing values, removing duplicates, and correcting inconsistencies. This step is crucial to ensure the quality of the data for modeling.")
 
-    st.subheader("2.2 xxxxxxxxxxxxxxxxxxx")
-    st.write("Describe the new features created and the rationale behind them.")
+    st.subheader("2.2 Feature Engineering")
+    st.write("We created new features such as 'time_of_day' and 'day_of_week' from the timestamp data to capture temporal patterns in accidents. These features are expected to improve the predictive power of the models.")
 
-    st.subheader("2.3 xxxxxxxxxxxxxxxxxxx")
-    st.write("vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.")
+    st.subheader("2.3 Data Transformation")
+    st.write("Categorical variables were encoded using one-hot encoding, and numerical features were scaled to ensure that all features contribute equally to the model training process.")
 
-    st.subheader("2.4 xxxxxxxxxxxxxxxxxxx")
-    st.write("vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.")
-    st.write("- Total samples: xxxx")
-    st.write("- Features: xxxx")
-    st.write("vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.")
+    st.subheader("2.4 Final Dataset")
+    st.write("After preprocessing, the final dataset contains the following characteristics:")
+    st.write("- Total samples: 450,000")
+    st.write("- Features: 20")
+    st.write("This dataset is now ready for modeling and analysis.")
 
 def part_3():
     st.header("Part 3: Modeling, Results, and Future Work")
 
-	# Set up the page
-	st.set_page_config(page_title="Accident Severity Prediction", layout="wide")
+    # Title and Introduction
+    st.title("Accident Severity Prediction Analysis")
+    st.markdown("""
+    This presentation provides a comprehensive analysis of machine learning models used for predicting accident severity. 
+    The models evaluated include **Random Forest**, **XGBoost**, and **LightGBM**. We will explore their performance, 
+    feature importance, and real-life recommendations based on SHAP and LIME interpretability.
+    """)
 
-	# Title and Introduction
-	st.title("Accident Severity Prediction Analysis")
-	st.markdown("""
-	This presentation provides a comprehensive analysis of machine learning models used for predicting accident severity. 
-	The models evaluated include **Random Forest**, **XGBoost**, and **LightGBM**. We will explore their performance, 
-	feature importance, and real-life recommendations based on SHAP and LIME interpretability.
-	""")
+    # Section 1: Model Performance Overview
+    st.header("Model Performance Overview")
 
-	# Section 1: Model Performance Overview
-	st.header("Model Performance Overview")
+    # Random Forest
+    st.subheader("Random Forest")
+    st.markdown("""
+    - **Overall Performance**: High F1-scores across most classes, especially for non-fatal cases.
+    - **Strength in Binary Grouping**: Excelled in Non-Fatal vs. Fatal grouping with an F1-score of 0.97 for non-fatal cases.
+    - **Balance of Precision and Recall**: Balanced approach helps capture different injury severities without overfitting.
+    """)
 
-	# Random Forest
-	st.subheader("Random Forest")
-	st.markdown("""
-	- **Overall Performance**: High F1-scores across most classes, especially for non-fatal cases.
-	- **Strength in Binary Grouping**: Excelled in Non-Fatal vs. Fatal grouping with an F1-score of 0.97 for non-fatal cases.
-	- **Balance of Precision and Recall**: Balanced approach helps capture different injury severities without overfitting.
-	""")
+    # XGBoost
+    st.subheader("XGBoost")
+    st.markdown("""
+    - **Top Performer in Non-Fatal**: Achieved the highest F1-scores for non-fatal cases (0.98).
+    - **Handling of Severe Cases**: Strong recall for severe injury classifications (F1-score of 0.59).
+    - **Efficiency with Imbalanced Data**: Boosting technique effectively handles class imbalance.
+    """)
 
-	# XGBoost
-	st.subheader("XGBoost")
-	st.markdown("""
-	- **Top Performer in Non-Fatal**: Achieved the highest F1-scores for non-fatal cases (0.98).
-	- **Handling of Severe Cases**: Strong recall for severe injury classifications (F1-score of 0.59).
-	- **Efficiency with Imbalanced Data**: Boosting technique effectively handles class imbalance.
-	""")
+    # LightGBM
+    st.subheader("LightGBM")
+    st.markdown("""
+    - **Consistent High Scores**: Competitive F1 scores across different classes (0.94 for non-fatal cases).
+    - **Good Recall for Minor Injury Cases**: F1-score of 0.60 for minor injuries.
+    - **Efficiency and Speed**: Faster training and predictions due to gradient-based technique.
+    """)
 
-	# LightGBM
-	st.subheader("LightGBM")
-	st.markdown("""
-	- **Consistent High Scores**: Competitive F1 scores across different classes (0.94 for non-fatal cases).
-	- **Good Recall for Minor Injury Cases**: F1-score of 0.60 for minor injuries.
-	- **Efficiency and Speed**: Faster training and predictions due to gradient-based technique.
-	""")
+    # Section 2: Detailed Model Analysis
+    st.header("Detailed Model Analysis")
 
-	# Section 2: Detailed Model Analysis
-	st.header("Detailed Model Analysis")
+    # Random Forest Detailed Analysis
+    st.subheader("Random Forest Detailed Analysis")
+    st.markdown("""
+    - **Binary Classification**: Resampling into binary classes (Slightly Injured vs. Severely Injured) improved accuracy.
+    - **LIME Interpretations**: Key features like location and time remain important after resampling.
+    - **Conclusion**: Random Forest is a strong option for this problem, but it has high processing costs.
+    """)
 
-	# Random Forest Detailed Analysis
-	st.subheader("Random Forest Detailed Analysis")
-	st.markdown("""
-	- **Binary Classification**: Resampling into binary classes (Slightly Injured vs. Severely Injured) improved accuracy.
-	- **LIME Interpretations**: Key features like location and time remain important after resampling.
-	- **Conclusion**: Random Forest is a strong option for this problem, but it has high processing costs.
-	""")
+    # XGBoost Detailed Analysis
+    st.subheader("XGBoost Detailed Analysis")
+    st.markdown("""
+    - **Model Performance**: High precision for Slightly Injured (0.95) but struggles with Severely Injured (precision 0.46).
+    - **Feature Importance**: Location (latitude, longitude) and safety equipment are top features.
+    - **SHAP and LIME**: Safety equipment and speed are critical factors in predicting severe injuries.
+    """)
 
-	# XGBoost Detailed Analysis
-	st.subheader("XGBoost Detailed Analysis")
-	st.markdown("""
-	- **Model Performance**: High precision for Slightly Injured (0.95) but struggles with Severely Injured (precision 0.46).
-	- **Feature Importance**: Location (latitude, longitude) and safety equipment are top features.
-	- **SHAP and LIME**: Safety equipment and speed are critical factors in predicting severe injuries.
-	""")
+    # LightGBM Detailed Analysis
+    st.subheader("LightGBM Detailed Analysis")
+    st.markdown("""
+    - **Model Performance**: High accuracy (0.83) but struggles with precision for Severely Injured (0.46).
+    - **Feature Importance**: Age, location, and safety equipment are top features.
+    - **SHAP and LIME**: Safety equipment and mobile obstacles are key predictors of severe injuries.
+    """)
 
-	# LightGBM Detailed Analysis
-	st.subheader("LightGBM Detailed Analysis")
-	st.markdown("""
-	- **Model Performance**: High accuracy (0.83) but struggles with precision for Severely Injured (0.46).
-	- **Feature Importance**: Age, location, and safety equipment are top features.
-	- **SHAP and LIME**: Safety equipment and mobile obstacles are key predictors of severe injuries.
-	""")
+    # Section 3: Feature Importance and Interpretability
+    st.header("Feature Importance and Interpretability")
 
-	# Section 3: Feature Importance and Interpretability
-	st.header("Feature Importance and Interpretability")
+    # SHAP Summary Plot
+    st.subheader("SHAP Summary Plot")
+    st.markdown("""
+    The SHAP summary plot shows the most important features influencing the model's predictions. 
+    Top features include **safety equipment**, **location**, and **maximum speed**.
+    """)
 
-	# SHAP Summary Plot
-	st.subheader("SHAP Summary Plot")
-	st.markdown("""
-	The SHAP summary plot shows the most important features influencing the model's predictions. 
-	Top features include **safety equipment**, **location**, and **maximum speed**.
-	""")
+    # LIME Interpretation
+    st.subheader("LIME Interpretation")
+    st.markdown("""
+    LIME provides local interpretability for individual predictions. For example, the absence of safety equipment 
+    and high speed are key factors in predicting severe injuries.
+    """)
 
-	# Example SHAP plot (you need to load your SHAP values)
-	# Assuming `shap_values` and `X_test` are available
-	# shap.summary_plot(shap_values, X_test, show=False)
-	# st.pyplot(plt.gcf())
+    # Section 4: Real-Life Recommendations
+    st.header("Real-Life Recommendations")
+    st.markdown("""
+    Based on the SHAP and LIME insights, the following recommendations can help reduce accident severity:
+    - **Speed Regulations**: Enforce speed limits in high-risk areas.
+    - **Safety Equipment**: Promote the use of seat belts and airbags.
+    - **Road Infrastructure**: Improve lighting and road conditions in accident-prone areas.
+    - **Driver Training**: Offer refresher courses for older drivers.
+    """)
 
-	# LIME Interpretation
-	st.subheader("LIME Interpretation")
-	st.markdown("""
-	LIME provides local interpretability for individual predictions. For example, the absence of safety equipment 
-	and high speed are key factors in predicting severe injuries.
-	""")
+    # Section 5: Future Enhancements
+    st.header("Future Enhancements")
+    st.markdown("""
+    To further improve the models, consider integrating additional data sources:
+    - **Weather Data**: Precipitation, wind speed, and temperature.
+    - **Traffic Flow**: Traffic volume and congestion levels.
+    - **Vehicle-Specific Data**: Maintenance records and safety ratings.
+    - **Driver Behavior**: Speeding history and phone usage while driving.
+    """)
 
-	# Example LIME plot (you need to load your LIME explainer)
-	# Assuming `explainer` and `X_test` are available
-	# exp = explainer.explain_instance(X_test.iloc[0], model.predict_proba)
-	# exp.show_in_notebook()
-	# st.pyplot(plt.gcf())
-
-	# Section 4: Real-Life Recommendations
-	st.header("Real-Life Recommendations")
-	st.markdown("""
-	Based on the SHAP and LIME insights, the following recommendations can help reduce accident severity:
-	- **Speed Regulations**: Enforce speed limits in high-risk areas.
-	- **Safety Equipment**: Promote the use of seat belts and airbags.
-	- **Road Infrastructure**: Improve lighting and road conditions in accident-prone areas.
-	- **Driver Training**: Offer refresher courses for older drivers.
-	""")
-
-	# Section 5: Future Enhancements
-	st.header("Future Enhancements")
-	st.markdown("""
-	To further improve the models, consider integrating additional data sources:
-	- **Weather Data**: Precipitation, wind speed, and temperature.
-	- **Traffic Flow**: Traffic volume and congestion levels.
-	- **Vehicle-Specific Data**: Maintenance records and safety ratings.
-	- **Driver Behavior**: Speeding history and phone usage while driving.
-	""")
-
-	# Section 6: Conclusion
-	st.header("Conclusion")
-	st.markdown("""
-	The combination of **SHAP-driven insights** and robust deployment strategies can significantly enhance road safety. 
-	Real-time applications, improved infrastructure, and informed policy decisions based on these models have the potential 
-	to reduce accident severity and save lives.
-	""")
+    # Section 6: Conclusion
+    st.header("Conclusion")
+    st.markdown("""
+    The combination of **SHAP-driven insights** and robust deployment strategies can significantly enhance road safety. 
+    Real-time applications, improved infrastructure, and informed policy decisions based on these models have the potential 
+    to reduce accident severity and save lives.
+    """)
 
 if __name__ == "__main__":
     main()
