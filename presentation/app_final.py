@@ -3,7 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-import plotly.express as px  # Added import for Plotly Express
+import plotly.express as px
+import shap
+from lime import lime_tabular
 import os
 
 def main():
@@ -110,12 +112,11 @@ def part_1():
     df_usagers = pd.read_csv('usagers-2022.csv', sep=';')
     value_counts = df_usagers['sexe'].value_counts()
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 4))  # Resized graph
     value_counts.plot(kind='bar', ax=ax)  
     ax.set_xlabel('Sex')
     ax.set_ylabel('Frequency')
     ax.set_title('Accident by Gender')
-
     st.pyplot(fig)
     st.write("From this exaple we can determine that Males (1) are far more prone to Accidents than Females, this would be a significant variable to consider when cleansing the data for modelling.")
 
@@ -172,7 +173,7 @@ def part_3():
     # Example Confusion Matrix for Random Forest
     st.write("**Confusion Matrix for Random Forest**")
     confusion_matrix = np.array([[8500, 500], [300, 1700]])  # Placeholder data
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 4))  # Resized graph
     sns.heatmap(confusion_matrix, annot=True, fmt='d', cmap='Blues', ax=ax)
     ax.set_xlabel('Predicted')
     ax.set_ylabel('Actual')
@@ -195,7 +196,7 @@ def part_3():
         'Importance': [0.35, 0.25, 0.20, 0.15, 0.05]
     })
     fig = px.bar(feature_importance, x='Feature', y='Importance', title='Feature Importance - XGBoost')
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)  # Resized graph
     st.write("The feature importance plot highlights that location and safety equipment are the most influential factors in predicting accident severity.")
 
     # LightGBM
@@ -211,7 +212,7 @@ def part_3():
     fpr = np.linspace(0, 1, 100)  # Placeholder data
     tpr = np.sqrt(fpr)  # Placeholder data
     roc_auc = 0.89  # Placeholder data
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 4))  # Resized graph
     ax.plot(fpr, tpr, label=f'ROC Curve (AUC = {roc_auc:.2f})')
     ax.plot([0, 1], [0, 1], 'k--')
     ax.set_xlabel('False Positive Rate')
@@ -235,8 +236,11 @@ def part_3():
     st.write("**SHAP Summary Plot**")
     st.write("(Placeholder: Replace with actual SHAP plot)")
     # Example code for SHAP plot (uncomment and replace with actual data)
+    # explainer = shap.TreeExplainer(model)
+    # shap_values = explainer.shap_values(X_test)
+    # fig, ax = plt.subplots(figsize=(8, 6))  # Resized graph
     # shap.summary_plot(shap_values, X_test, show=False)
-    # st.pyplot(plt.gcf())
+    # st.pyplot(fig)
 
     # LIME Interpretation
     st.subheader("LIME Interpretation")
@@ -249,9 +253,18 @@ def part_3():
     st.write("**LIME Interpretation**")
     st.write("(Placeholder: Replace with actual LIME explanation)")
     # Example code for LIME plot (uncomment and replace with actual data)
-    # exp = explainer.explain_instance(X_test.iloc[0], model.predict_proba)
-    # exp.show_in_notebook()
-    # st.pyplot(plt.gcf())
+    # explainer_lime = lime_tabular.LimeTabularExplainer(
+    #     training_data=X_test.values,
+    #     feature_names=X_test.columns,
+    #     class_names=['Non-Severe', 'Severe'],
+    #     mode='classification'
+    # )
+    # exp = explainer_lime.explain_instance(
+    #     data_row=X_test.iloc[0],
+    #     predict_fn=model.predict_proba
+    # )
+    # fig = exp.as_pyplot_figure()
+    # st.pyplot(fig)
 
     # Section 3: Real-Life Recommendations
     st.header("Real-Life Recommendations")
