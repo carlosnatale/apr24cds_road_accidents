@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np  # Added import for numpy
 import os
+import plotly.express as px
+
 
 def main():
     st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
