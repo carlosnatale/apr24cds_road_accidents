@@ -2,10 +2,9 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np  # Added import for numpy
+import numpy as np
+import plotly.express as px  # Added import for Plotly Express
 import os
-import plotly.express as px
-
 
 def main():
     st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
