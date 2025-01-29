@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np  # Added import for numpy
 import os
 
 def main():
@@ -167,33 +168,6 @@ def part_3():
     - **Balance of Precision and Recall**: Balanced approach helps capture different injury severities without overfitting.
     """)
 
-    # XGBoost
-    st.subheader("XGBoost")
-    st.markdown("""
-    - **Top Performer in Non-Fatal**: Achieved the highest F1-scores for non-fatal cases (0.98).
-    - **Handling of Severe Cases**: Strong recall for severe injury classifications (F1-score of 0.59).
-    - **Efficiency with Imbalanced Data**: Boosting technique effectively handles class imbalance.
-    """)
-
-    # LightGBM
-    st.subheader("LightGBM")
-    st.markdown("""
-    - **Consistent High Scores**: Competitive F1 scores across different classes (0.94 for non-fatal cases).
-    - **Good Recall for Minor Injury Cases**: F1-score of 0.60 for minor injuries.
-    - **Efficiency and Speed**: Faster training and predictions due to gradient-based technique.
-    """)
-
-    # Section 2: Detailed Model Analysis
-    st.header("Detailed Model Analysis")
-
-    # Random Forest Detailed Analysis
-    st.subheader("Random Forest Detailed Analysis")
-    st.markdown("""
-    - **Binary Classification**: Resampling into binary classes (Slightly Injured vs. Severely Injured) improved accuracy.
-    - **LIME Interpretations**: Key features like location and time remain important after resampling.
-    - **Conclusion**: Random Forest is a strong option for this problem, but it has high processing costs.
-    """)
-
     # Example Confusion Matrix for Random Forest
     st.write("**Confusion Matrix for Random Forest**")
     confusion_matrix = np.array([[8500, 500], [300, 1700]])  # Placeholder data
@@ -205,12 +179,12 @@ def part_3():
     st.pyplot(fig)
     st.write("The confusion matrix shows that the Random Forest model performs well in classifying non-fatal cases but struggles slightly with severe injuries.")
 
-    # XGBoost Detailed Analysis
-    st.subheader("XGBoost Detailed Analysis")
+    # XGBoost
+    st.subheader("XGBoost")
     st.markdown("""
-    - **Model Performance**: High precision for Slightly Injured (0.95) but struggles with Severely Injured (precision 0.46).
-    - **Feature Importance**: Location (latitude, longitude) and safety equipment are top features.
-    - **SHAP and LIME**: Safety equipment and speed are critical factors in predicting severe injuries.
+    - **Top Performer in Non-Fatal**: Achieved the highest F1-scores for non-fatal cases (0.98).
+    - **Handling of Severe Cases**: Strong recall for severe injury classifications (F1-score of 0.59).
+    - **Efficiency with Imbalanced Data**: Boosting technique effectively handles class imbalance.
     """)
 
     # Example Feature Importance Plot for XGBoost
@@ -223,12 +197,12 @@ def part_3():
     st.plotly_chart(fig)
     st.write("The feature importance plot highlights that location and safety equipment are the most influential factors in predicting accident severity.")
 
-    # LightGBM Detailed Analysis
-    st.subheader("LightGBM Detailed Analysis")
+    # LightGBM
+    st.subheader("LightGBM")
     st.markdown("""
-    - **Model Performance**: High accuracy (0.83) but struggles with precision for Severely Injured (0.46).
-    - **Feature Importance**: Age, location, and safety equipment are top features.
-    - **SHAP and LIME**: Safety equipment and mobile obstacles are key predictors of severe injuries.
+    - **Consistent High Scores**: Competitive F1 scores across different classes (0.94 for non-fatal cases).
+    - **Good Recall for Minor Injury Cases**: F1-score of 0.60 for minor injuries.
+    - **Efficiency and Speed**: Faster training and predictions due to gradient-based technique.
     """)
 
     # Example ROC Curve for LightGBM
@@ -246,7 +220,7 @@ def part_3():
     st.pyplot(fig)
     st.write("The ROC curve shows that the LightGBM model has a high AUC score, indicating strong performance in distinguishing between classes.")
 
-    # Section 3: Feature Importance and Interpretability
+    # Section 2: Feature Importance and Interpretability
     st.header("Feature Importance and Interpretability")
 
     # SHAP Summary Plot
@@ -278,7 +252,7 @@ def part_3():
     # exp.show_in_notebook()
     # st.pyplot(plt.gcf())
 
-    # Section 4: Real-Life Recommendations
+    # Section 3: Real-Life Recommendations
     st.header("Real-Life Recommendations")
     st.markdown("""
     Based on the SHAP and LIME insights, the following recommendations can help reduce accident severity:
@@ -288,7 +262,7 @@ def part_3():
     - **Driver Training**: Offer refresher courses for older drivers.
     """)
 
-    # Section 5: Future Enhancements
+    # Section 4: Future Enhancements
     st.header("Future Enhancements")
     st.markdown("""
     To further improve the models, consider integrating additional data sources:
@@ -298,12 +272,13 @@ def part_3():
     - **Driver Behavior**: Speeding history and phone usage while driving.
     """)
 
-    # Section 6: Conclusion
+    # Section 5: Conclusion
     st.header("Conclusion")
     st.markdown("""
     The combination of **SHAP-driven insights** and robust deployment strategies can significantly enhance road safety. 
     Real-time applications, improved infrastructure, and informed policy decisions based on these models have the potential 
     to reduce accident severity and save lives.
     """)
+
 if __name__ == "__main__":
     main()
