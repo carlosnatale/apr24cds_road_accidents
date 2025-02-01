@@ -333,46 +333,9 @@ def part_3():
     st.header("Feature Importance and Interpretability")
 
     # SHAP Summary Plot
-    st.subheader("SHAP Summary Plot")
-    st.markdown("""
-    The SHAP summary plot shows the most important features influencing the model's predictions. 
-    Top features include **safety equipment**, **location**, and **maximum speed**.
-    """)
-
-    # Placeholder for SHAP Summary Plot
-    st.write("**SHAP Summary Plot**")
-    st.write("SHAP plot)")
-    # Example code for SHAP plot (uncomment and replace with actual data)
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(X_test)
-    fig, ax = plt.subplots(figsize=(8, 6))  # Resized graph
-    shap.summary_plot(shap_values, X_test, show=False)
-    st.pyplot(fig)
-
-    # LIME Interpretation
-    st.subheader("LIME Interpretation")
-    st.markdown("""
-    LIME provides local interpretability for individual predictions. For example, the absence of safety equipment 
-    and high speed are key factors in predicting severe injuries.
-    """)
-
-    # Placeholder for LIME Interpretation
-    st.write("**LIME Interpretation**")
-    st.write("(Placeholder: Replace with actual LIME explanation)")
-    # Example code for LIME plot (uncomment and replace with actual data)
-    explainer_lime = lime_tabular.LimeTabularExplainer(
-        training_data=X_test.values,
-        feature_names=X_test.columns,
-        class_names=['Non-Severe', 'Severe'],
-        mode='classification'
-    )
-    exp = explainer_lime.explain_instance(
-        data_row=X_test.iloc[0],
-        predict_fn=model.predict_proba
-    )
-    fig = exp.as_pyplot_figure()
-    st.pyplot(fig)
-
+    
+    
+    
     # Section 3: Real-Life Recommendations
     st.header("Real-Life Recommendations")
     st.markdown("""
