@@ -225,40 +225,30 @@ def part_2():
 def part_3():
     st.header("Part 3: Modeling, Results, and Future Work")
 
-    # Load and prepare data from output.csv
-    if os.path.exists("output.csv"):
-        data = pd.read_csv("output.csv")
+    # Load the pre-trained model
+    model_path = "model.pkl"
+    if os.path.exists(model_path):
+        with open(model_path, "rb") as f:
+            model = pickle.load(f)
     else:
-        st.error("File 'output.csv' not found.")
+        st.error(f"Pre-trained model file '{model_path}' not found.")
         return
 
-    data = data.drop_duplicates()
+    # Load the test data for generating results and interpretations
+    test_data_path = "X_test.csv"
+    if os.path.exists(test_data_path):
+        X_test = pd.read_csv(test_data_path)
+    else:
+        st.error(f"Test data file '{test_data_path}' not found.")
+        return
 
-    # Prepare features and target; adjust columns as needed
-    # Assuming 'gravity' is the target and removing some unwanted columns
-    X = data.drop(columns=['gravity', 'AccID', 'vehicleID', 'num_veh'], errors='ignore')
-    y = data['gravity']
-
-    # Split data into training and testing sets
-    from sklearn.model_selection import train_test_split
-    from sklearn.ensemble import RandomForestClassifier
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Train a RandomForestClassifier model
-    model = RandomForestClassifier(n_estimators=100, random_state=42)
-    model.fit(X_train, y_train)
-
-    # Model Evaluation (Optional)
-    st.write("Model performance evaluation:")
-    accuracy = model.score(X_test, y_test)
-    st.write(f"Accuracy: {accuracy:.2f}")
+    # Optional: Display model performance if you have saved evaluation metrics
+    # For example, you could have saved accuracy in a separate file or variable.
 
     # SHAP Summary Plot
     st.subheader("SHAP Summary Plot")
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(X_test)
-
-    # Capture the SHAP summary plot
     fig, ax = plt.subplots(figsize=(8, 6))
     shap.summary_plot(shap_values, X_test, show=False)
     st.pyplot(fig)
@@ -266,30 +256,26 @@ def part_3():
     # LIME Interpretation
     st.subheader("LIME Interpretation")
     explainer_lime = lime_tabular.LimeTabularExplainer(
-        training_data=X_train.values,
-        feature_names=X_train.columns,
+        training_data=X_test.values,  # Or use your training data if available
+        feature_names=X_test.columns,
         class_names=['Uninjured', 'Minor Injury', 'Hospitalized Injury', 'Fatal'],
         mode='classification'
     )
-
-    # Example LIME interpretation for a single instance from the test set
+    # LIME explanation for a single instance
     exp = explainer_lime.explain_instance(X_test.iloc[0], model.predict_proba)
-    
-    # Plot the LIME explanation
     fig = exp.as_pyplot_figure()
     st.pyplot(fig)
 
-    # Results and Future Work
     st.subheader("Results")
     st.write("""
-    The model's performance and interpretability using SHAP and LIME indicate that key features such as safety equipment, location, and speed 
-    are influential in predicting accident severity.
+    The pre-trained model's predictions and interpretability using SHAP and LIME indicate that key features such as 
+    safety equipment, location, and speed are influential in predicting accident severity.
     """)
 
     st.header("Future Enhancements")
     st.write("""
-    Future improvements could include integrating additional data sources such as weather conditions, traffic data, or using advanced models 
-    like XGBoost or LightGBM for improved predictive power.
+    Future improvements could include integrating additional data sources such as weather conditions, traffic data, or using 
+    advanced models like XGBoost or LightGBM for improved predictive power.
     """)
 
 if __name__ == "__main__":
