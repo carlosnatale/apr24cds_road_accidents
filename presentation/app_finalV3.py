@@ -223,7 +223,6 @@ def part_2():
     st.write("This dataset is now ready for modeling and analysis.")
 
 def part_3():
-    def part_3():
     st.header("Part 3: Modeling, Results, and Future Work")
 
     # Load and prepare data from output.csv
