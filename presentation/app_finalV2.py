@@ -332,9 +332,51 @@ def part_3():
     # Section 2: Feature Importance and Interpretability
     st.header("Feature Importance and Interpretability")
 
-    # SHAP Summary Plot
-    
-    
+    # SHAP Analysis Dashboard
+    st.title("SHAP Analysis Dashboard")
+    st.write("""
+    This dashboard displays SHAP analysis for different machine learning models (XGBoost, LightGBM, and Random Forest). 
+    Each graph visualizes the feature importance and interaction values. Below each graph, you'll find the corresponding interpretations.
+    """)
+
+    # Tabs for each model
+    tab_xgb, tab_lgb, tab_rf = st.tabs(["XGBoost", "LightGBM", "Random Forest"])
+
+    # XGBoost SHAP analysis
+    with tab_xgb:
+        st.header("XGBoost SHAP Analysis")
+        xgb_image = Image.open("shap1 - xgboost.png")
+        st.image(xgb_image, caption="XGBoost SHAP Summary Plot", use_column_width=True)
+        st.subheader("Interpretation")
+        st.write("""
+        - **Top features**: `safety_equipment1_1`, `vehicle_category_7`, `lat`, and `maximum_speed` are the most influential features.
+        - **Patterns**: High values of `maximum_speed` (red dots) generally push predictions in a positive direction, indicating a higher likelihood of a particular outcome.
+        - **Feature importance**: The spread of the dots along the x-axis shows how much each feature contributes to the model’s output. Wider spread means a higher impact.
+        """)
+
+    # LightGBM SHAP analysis
+    with tab_lgb:
+        st.header("LightGBM SHAP Analysis")
+        lgb_image = Image.open("shap1 - lightgbm.png")
+        st.image(lgb_image, caption="LightGBM SHAP Interaction Values", use_column_width=True)
+        st.subheader("Interpretation")
+        st.write("""
+        - **Interaction focus**: Columns like `year`, `lum`, `atm_condition`, and `collision_type` show their interaction with other features.
+        - **Patterns**: High values of `collision_type` interact strongly with other features, indicating significant influence on the model's predictions.
+        - **Balanced contributions**: The symmetric distribution of interaction values around 0 suggests well-balanced contributions between positive and negative impacts.
+        """)
+
+    # Random Forest SHAP analysis
+    with tab_rf:
+        st.header("Random Forest SHAP Analysis")
+        rf_image = Image.open("shap1 - random forest.png")
+        st.image(rf_image, caption="Random Forest SHAP Summary Plot", use_column_width=True)
+        st.subheader("Interpretation")
+        st.write("""
+        - **Top features**: `vehicle_category`, `seat`, `user_category`, and `fixed_obstacle` have the highest impact on predictions.
+        - **Patterns**: Features like `maximum_speed` and `age` exhibit diverse effects depending on whether their values are high or low (red or blue).
+        - **Comparison with XGBoost**: While many features are important in both models, the order of importance differs, indicating potential variations in how each algorithm processes data.
+        """)
     
     # Section 3: Real-Life Recommendations
     st.header("Real-Life Recommendations")
