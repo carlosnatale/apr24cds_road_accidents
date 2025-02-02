@@ -351,7 +351,7 @@ def part_3():
     with tab_xgb:
         st.header("XGBoost SHAP Analysis")
         xgb_image = Image.open("shap1 - xgboost.png")
-        st.image(xgb_image, caption="XGBoost SHAP Summary Plot", , width=500)
+        st.image(xgb_image, caption="XGBoost SHAP Summary Plot", width=500)
         st.subheader("Interpretation")
         st.write("""
         - **Top features**: `safety_equipment1_1`, `vehicle_category_7`, `lat`, and `maximum_speed` are the most influential features.
