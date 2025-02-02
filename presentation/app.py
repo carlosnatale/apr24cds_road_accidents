@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+import plotly.graph_objects as go
+from scipy import stats
+from datetime import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -347,7 +350,7 @@ def part_3():
     # XGBoost SHAP analysis
     with tab_xgb:
         st.header("XGBoost SHAP Analysis")
-        xgb_image = Image.open("shap1 - xgboost.png")
+        xgb_image = Image.open("shap1 - xgboost.png", width=400)
         st.image(xgb_image, caption="XGBoost SHAP Summary Plot", use_column_width=True)
         st.subheader("Interpretation")
         st.write("""
@@ -359,7 +362,7 @@ def part_3():
     # LightGBM SHAP analysis
     with tab_lgb:
         st.header("LightGBM SHAP Analysis")
-        lgb_image = Image.open("shap1 - lightgbm.png")
+        lgb_image = Image.open("shap1 - lightgbm.png", width=400)
         st.image(lgb_image, caption="LightGBM SHAP Interaction Values", use_column_width=True)
         st.subheader("Interpretation")
         st.write("""
@@ -371,7 +374,7 @@ def part_3():
     # Random Forest SHAP analysis
     with tab_rf:
         st.header("Random Forest SHAP Analysis")
-        rf_image = Image.open("shap1 - random forest.png")
+        rf_image = Image.open("shap1 - random forest.png", width=400)
         st.image(rf_image, caption="Random Forest SHAP Summary Plot", use_column_width=True)
         st.subheader("Interpretation")
         st.write("""
