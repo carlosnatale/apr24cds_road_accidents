@@ -1,0 +1,156 @@
+### Streamlit Code with Interactivity and Live Visualizations
+
+```python
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Streamlit page configuration
+st.set_page_config(page_title="Road Accident Analysis", layout="wide")
+
+# Sidebar navigation
+st.sidebar.title("Navigation")
+options = st.sidebar.radio("Select Section:", ["Introduction", "Data Preprocessing", "Modeling and Results"])
+
+# Placeholder for uploading data
+@st.cache_data
+def load_sample_data():
+    # Placeholder for real data
+    return pd.DataFrame({
+        "Severity": ["Uninjured", "Minor Injury", "Hospitalized", "Fatal"],
+        "Count": [40000, 30000, 15000, 5000]
+    })
+
+# Load the sample data
+if "data" not in st.session_state:
+    st.session_state["data"] = load_sample_data()
+
+# Introduction Section
+if options == "Introduction":
+    st.title("Road Accident Analysis in France")
+    st.markdown("""
+    ## Context and Objectives
+    - Analyze road accident data from 2019 to 2022 to understand patterns.
+    - Build predictive models to forecast accident severity.
+    - Provide actionable insights for policymakers.
+    """)
+
+    # Interactive summary
+    st.markdown("### Upload Your Dataset")
+    uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+    if uploaded_file:
+        st.session_state["data"] = pd.read_csv(uploaded_file)
+        st.success("Data uploaded successfully!")
+
+    st.markdown("### Accident Severity Overview")
+    st.write("Here's a preview of your dataset:")
+    st.write(st.session_state["data"].head())
+
+    # Pie chart of accident severity
+    st.markdown("#### Severity Distribution")
+    severity_data = st.session_state["data"]
+    if "Severity" in severity_data.columns and "Count" in severity_data.columns:
+        fig, ax = plt.subplots()
+        ax.pie(severity_data["Count"], labels=severity_data["Severity"], autopct="%1.1f%%", startangle=90)
+        ax.axis("equal")
+        st.pyplot(fig)
+
+# Data Preprocessing Section
+elif options == "Data Preprocessing":
+    st.title("Data Preprocessing")
+    st.markdown("""
+    ## Preprocessing Steps
+    - Handling missing values and outliers.
+    - Encoding categorical variables.
+    - Balancing the dataset to address class imbalances.
+    """)
+
+    # Interactive filter for missing values
+    st.markdown("### Explore Missing Values")
+    columns = st.multiselect("Select columns to inspect", st.session_state["data"].columns)
+    if columns:
+        missing_data = st.session_state["data"][columns].isnull().sum().reset_index()
+        missing_data.columns = ["Feature", "Missing Count"]
+        st.bar_chart(missing_data.set_index("Feature"))
+
+    st.markdown("### Data Transformation Example")
+    st.code("""
+# Example of encoding categorical variables
+from sklearn.preprocessing import OneHotEncoder
+encoder = OneHotEncoder()
+encoded = encoder.fit_transform(df[['categorical_column']])
+    """)
+
+# Modeling and Results Section
+elif options == "Modeling and Results":
+    st.title("Modeling and Results")
+    st.markdown("""
+    ## Machine Learning Models
+    - **Random Forest**: Balanced performance for slightly injured cases.
+    - **XGBoost**: Strong for non-fatal predictions.
+    - **AdaBoost**: Focused on improving minority class recall.
+    """)
+
+    # Interactive slider for model comparison
+    st.markdown("### Model Performance Metrics")
+    metric = st.selectbox("Select metric to visualize", ["Accuracy", "F1-Score"])
+    performance_data = pd.DataFrame({
+        "Model": ["Random Forest", "XGBoost", "AdaBoost"],
+        "Accuracy": [0.85, 0.83, 0.80],
+        "F1-Score": [0.82, 0.79, 0.75]
+    })
+    st.bar_chart(performance_data.set_index("Model")[metric])
+
+    # Interactive feature importance chart
+    st.markdown("### Feature Importance")
+    importance_data = pd.DataFrame({
+        "Feature": ["Speed", "Lighting", "Age"],
+        "Importance": [0.4, 0.3, 0.3]
+    })
+    selected_features = st.multiselect("Select features to display", importance_data["Feature"])
+    if selected_features:
+        fig, ax = plt.subplots()
+        sns.barplot(
+            x="Importance",
+            y="Feature",
+            data=importance_data[importance_data["Feature"].isin(selected_features)],
+            ax=ax
+        )
+        st.pyplot(fig)
+
+    # Recommendations
+    st.markdown("""
+    ## Recommendations
+    - Enforce stricter speed regulations.
+    - Improve lighting in high-risk areas.
+    - Encourage the use of safety equipment.
+    """)
+
+# Footer
+st.sidebar.info("Interactive Presentation | Built with Streamlit")
+```
+
+---
+
+### Key Features
+1. **Upload Your Data**:
+   - Replace the sample data with your dataset using the `Upload Your Dataset` option.
+2. **Interactive Charts**:
+   - Select metrics or features dynamically to customize visualizations.
+3. **Preprocessing Visualization**:
+   - Highlight missing values or transformations with interactive filters.
+4. **Modular Framework**:
+   - Easily replace placeholders (like sample data or feature importance) with real outputs from your analysis.
+
+---
+
+### Running the Application
+1. Save the code in a file, e.g., `interactive_presentation.py`.
+2. Run the Streamlit app:
+   ```bash
+   streamlit run interactive_presentation.py
+   ```
+3. Open the app in your browser and upload your real dataset to see live results.
+
+This template is flexible and ready to incorporate your actual data and analysis. Let me know if you need further customization!
