@@ -7,6 +7,8 @@ import plotly.express as px
 import shap
 from lime import lime_tabular
 import os
+from PIL import Image
+
 
 def main():
     st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
