@@ -350,8 +350,8 @@ def part_3():
     # XGBoost SHAP analysis
     with tab_xgb:
         st.header("XGBoost SHAP Analysis")
-        xgb_image = Image.open("shap1 - xgboost.png", width=400)
-        st.image(xgb_image, caption="XGBoost SHAP Summary Plot", use_column_width=True)
+        xgb_image = Image.open("shap1 - xgboost.png")
+        st.image(xgb_image, caption="XGBoost SHAP Summary Plot", , width=500)
         st.subheader("Interpretation")
         st.write("""
         - **Top features**: `safety_equipment1_1`, `vehicle_category_7`, `lat`, and `maximum_speed` are the most influential features.
@@ -362,8 +362,8 @@ def part_3():
     # LightGBM SHAP analysis
     with tab_lgb:
         st.header("LightGBM SHAP Analysis")
-        lgb_image = Image.open("shap1 - lightgbm.png", width=400)
-        st.image(lgb_image, caption="LightGBM SHAP Interaction Values", use_column_width=True)
+        lgb_image = Image.open("shap1 - lightgbm.png")
+        st.image(lgb_image, caption="LightGBM SHAP Interaction Values", width=500)
         st.subheader("Interpretation")
         st.write("""
         - **Interaction focus**: Columns like `year`, `lum`, `atm_condition`, and `collision_type` show their interaction with other features.
@@ -374,8 +374,8 @@ def part_3():
     # Random Forest SHAP analysis
     with tab_rf:
         st.header("Random Forest SHAP Analysis")
-        rf_image = Image.open("shap1 - random forest.png", width=400)
-        st.image(rf_image, caption="Random Forest SHAP Summary Plot", use_column_width=True)
+        rf_image = Image.open("shap1 - random forest.png")
+        st.image(rf_image, caption="Random Forest SHAP Summary Plot", width=500)
         st.subheader("Interpretation")
         st.write("""
         - **Top features**: `vehicle_category`, `seat`, `user_category`, and `fixed_obstacle` have the highest impact on predictions.
