@@ -8,6 +8,7 @@ import shap
 from lime import lime_tabular
 import os
 from PIL import Image
+from scipy import stats
 
 
 def main():
