@@ -11,7 +11,19 @@ import shap
 from lime import lime_tabular
 import os
 from PIL import Image
+import io
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 
+import gzip
+import pickle
+
+# Load the compressed dataset
+file_path = "data.pkl.gz"
+
+with gzip.open(file_path, "rb") as f:
+    data_final = pickle.load(f)
+data_final = data_final.drop_duplicates()
 
 def main():
     st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
@@ -242,23 +254,402 @@ def part_1():
 
     st.write("Overall, this data-driven approach aims to contribute significantly to road safety research, offering predictive insights to save lives and enhance traffic safety in France.")
     
+
+
+
+
+
 def part_2():
     st.header("Part 2: Data Preprocessing and Feature Engineering")
+    #st.markdown("Extensive data cleaning and processing were necessary to prepare the dataset for analysis. The treatment process involved key steps:")
+   
+    st.title("🧹 Data Cleaning and Processing")
+    st.markdown("In this section, we cleaned the data by handling missing values, removing duplicates, and correcting inconsistencies. This step is crucial to ensure the quality of the data for modeling.")
 
-    st.subheader("2.1 Data Cleaning")
-    st.write("In this section, we cleaned the data by handling missing values, removing duplicates, and correcting inconsistencies. This step is crucial to ensure the quality of the data for modeling.")
+    #st.write("In this section, we cleaned the data by handling missing values, removing duplicates, and correcting inconsistencies. This step is crucial to ensure the quality of the data for modeling.")
 
-    st.subheader("2.2 Feature Engineering")
-    st.write("We created new features such as 'time_of_day' and 'day_of_week' from the timestamp data to capture temporal patterns in accidents. These features are expected to improve the predictive power of the models.")
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
 
-    st.subheader("2.3 Data Transformation")
-    st.write("Categorical variables were encoded using one-hot encoding, and numerical features were scaled to ensure that all features contribute equally to the model training process.")
+    # ✅ Loading and Processing Datasets
+    st.markdown("✅ **Loading and Processing Datasets**")
+    st.markdown("""
+    - The dataset initially consisted of **four separate CSV files per year (2019-2022)**:
+                
+        • `accidents.csv`
+                
+        • `locations.csv`
+                
+        • `users.csv`
+                
+        • `vehicles.csv`
+                
+    - Each dataset was loaded and processed using a function that:
+                
+        • Read the CSV files.
+                
+        • Handled incorrect formatting (`on_bad_lines='skip'`).
+                
+        • Assigned correct data types (`dtype=str` for consistency).
+    """)
 
-    st.subheader("2.4 Final Dataset")
-    st.write("After preprocessing, the final dataset contains the following characteristics:")
-    st.write("- Total samples: 450,000")
-    st.write("- Features: 20")
-    st.write("This dataset is now ready for modeling and analysis.")
+    
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Standardizing Column Names
+    st.markdown("✅ **Standardizing Column Names**")
+    st.markdown("""
+    - Column names in the raw dataset were in **French**.
+    - Translated all column names to **English** for clarity and better collaboration.
+    - Example transformations:
+        • `jour` → `day`
+        • `mois` → `month`
+        • `an` → `year`
+        • `dep` → `dep_code`
+    """)
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Handling Missing Values
+    st.markdown("✅ **Handling Missing Values**")
+    st.markdown("""
+    - **Replaced Not Specified Values**:
+                
+        • `1` (indicating "Not specified") in `reason_travel` was replaced with `'0' ('Unknown')`.
+                
+        • All `-1` values were converted to `NaN` to standardize missing data.
+                
+    - **Dropped Irrelevant Columns**:
+        • Removed `id_usager` and columns with **more than 30% missing values**.
+    """)
+
+ 
+
+    # st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # # ✅ Latitude & Longitude Conversion
+    # st.markdown("✅ **Latitude & Longitude Conversion**")
+    # st.markdown("""
+    # - Geographic coordinates in the dataset used **commas (`','`)** instead of **decimal points (`'.'`)**.
+    # - Converted values to ensure compatibility with geospatial tools.
+    # """)
+
+    
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Duplicate & Outlier Removal
+    st.markdown("✅ **Duplicate & Outlier Removal**")
+    st.markdown("""
+    - **Duplicates**: Checked and removed to prevent redundancy.
+                
+    - **Outliers removed based on realistic thresholds**:
+                
+        • **Speed**: Dropped values `< 5 km/h` or `> 125 km/h` (unrealistic).
+                
+        • **Age**: Dropped values `< 0` or `> 97` based on statistical testing.
+                
+        • **Geographical Codes**: Removed invalid entries in `dep_code`.
+    """)
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Missing Value Imputation
+    st.markdown("✅ **Missing Value Imputation**")
+    st.markdown("""
+    - Instead of dropping rows, **imputation** was used to fill missing values based on:
+                
+        • **Distribution of existing values**.
+                
+        • Avoiding bias while maintaining dataset integrity.
+    """)
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Deletion of Redundant Location Fields
+    st.markdown("✅ **Deletion of Redundant Location Fields**")
+    st.markdown("""
+    - The dataset contained multiple location-related fields.
+    - Retained only **latitude and longitude** for geospatial analysis.
+    """)
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Merging Datasets
+    st.markdown("✅ **Merging Datasets**")
+    st.markdown("""
+    - After preprocessing, the datasets were merged into a **single dataset**.
+                
+    - The merging process:
+                
+        • Used `AccID` as the primary key.
+                
+        • Ensured each accident had complete details from all four datasets.
+                
+        • Created a well-structured dataset for analysis.
+    """)
+
+    # Display dataset information
+
+    buffer = io.StringIO()
+    data_final.info(buf=buffer)
+    info_str = buffer.getvalue()
+
+    # Compute NaN values per column
+    nan_counts = data_final.isna().sum()
+    nan_output = f"Total NaN values per column:\n{nan_counts.to_string()}"
+
+    # Count duplicate rows
+    duplicate_count = data_final.duplicated().sum()
+    duplicate_output = f"\nTotal duplicate rows: {duplicate_count}"
+
+    # Display dataset summary
+    st.markdown("### 📝 Dataset Summary")
+    st.code(info_str, language="plaintext")
+
+    # Display NaN values
+    st.markdown("### 📌 Missing Values Summary")
+    st.code(nan_output, language="plaintext")
+
+    # Display duplicate count
+    st.markdown("### 🔄 Duplicate Rows Summary")
+    st.code(duplicate_output, language="plaintext")
+
+    st.success("🎯 The dataset is now **clean, consistent, and ready** for further analysis!")
+
+
+
+
+
+
+
+
+
+    st.title("🔧 Feature Engineering & Data Transformation")
+    #st.markdown("This section covers the preprocessing steps applied to prepare the dataset for modeling.")
+
+    #st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Dropping Unnecessary Columns
+    st.markdown("✅ **Dropping Unnecessary Columns**")
+    st.markdown("""
+    - The following columns were **removed** because they were not useful for modeling:
+                
+        • `AccID`: Accident identifier (not a feature).
+                
+        • `birth_year`: Age will be used instead.
+                
+        • `vehicleID`, `num_veh`: Redundant vehicle identifiers.
+    """)
+
+    st.code("""
+    # Drop unnecessary columns
+    data_processed = data_processed.drop(['AccID', 'birth_year', 'vehicleID', 'num_veh'], axis=1)
+    """, language="python")
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Cyclical Encoding for Temporal Features
+    st.markdown("✅ **Cyclical Encoding for Temporal Features**")
+    st.markdown("""
+    - Temporal features (`day`, `month`, `time`) were transformed using **sine and cosine encoding** to preserve cyclical patterns.
+                
+    - The following transformations were applied:
+                
+        • `day_sin`, `day_cos` (Day of the month: 1-31).
+                
+        • `month_sin`, `month_cos` (Month of the year: 1-12).
+                
+        • `time_sin`, `time_cos` (Time of day converted to milliseconds).
+                
+    - Original time columns were dropped after encoding.
+    """)
+
+    st.code("""
+    # Apply cyclical encoding
+    data_processed['day_sin'] = np.sin(2 * np.pi * data_processed['day'] / 31)
+    data_processed['day_cos'] = np.cos(2 * np.pi * data_processed['day'] / 31)
+
+    data_processed['month_sin'] = np.sin(2 * np.pi * data_processed['month'] / 12)
+    data_processed['month_cos'] = np.cos(2 * np.pi * data_processed['month'] / 12)
+
+    data_processed['time_sin'] = np.sin(2 * np.pi * data_processed['time'] / 86340000) 
+    data_processed['time_cos'] = np.cos(2 * np.pi * data_processed['time'] / 86340000)
+
+    # Drop original time columns
+    data_processed.drop(columns=['day', 'month', 'time'], inplace=True)
+    """, language="python")
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Defining Features and Target Variable
+    st.markdown("✅ **Defining Features and Target Variable**")
+    st.markdown("""
+    - Three groups of features were identified:
+                
+        • **Categorical features** (to be encoded using one-hot encoding).
+                
+        • **Numerical features** (to be standardized).
+                
+        • **Cyclical features** (already transformed).
+                
+    - Target variable: `gravity` (severity of the accident).
+    """)
+
+    st.code("""
+    features_dummy = ['year', 'lum', 'atm_condition', 'collision_type',
+        'route_category', 'traffic_regime', 'total_number_lanes',
+        'reserved_lane_code', 'longitudinal_profile', 'plan',
+        'surface_condition', 'infra', 'accident_situation',
+        'traffic_direction', 'vehicle_category', 'fixed_obstacle',
+        'mobile_obstacle', 'initial_impact_point', 'manv', 'motor', 'seat',
+        'user_category', 'gender', 'reason_travel', 'safety_equipment1']
+
+    features_scaler = ['lat', 'long', 'upstream_terminal_number', 'distance_upstream_terminal', 'maximum_speed', 'age']
+
+    features_temporal = ['day_sin', 'day_cos', 'month_sin', 'month_cos', 'time_sin', 'time_cos']
+
+    target = 'gravity'
+    """, language="python")
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Encoding Categorical Features
+    st.markdown("✅ **Encoding Categorical Features**")
+    st.markdown("""
+    - Categorical variables were transformed using **one-hot encoding**.
+                
+    - The `drop_first=True` parameter was used to prevent multicollinearity.
+    """)
+
+    st.code("""
+    X = data_processed.drop(columns=[target])
+    y = data_processed[target]
+
+    # Convert target variable to integer
+    y = y.astype(int)
+
+    # One-hot encoding
+    X = pd.get_dummies(X, columns=features_dummy, drop_first=True)
+    """, language="python")
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Splitting Dataset
+    st.markdown("✅ **Splitting Dataset**")
+    st.markdown("""
+    - The dataset was split into **training (70%)** and **testing (30%)** sets.
+                
+    - **Stratified sampling** ensured the distribution of classes remained balanced.
+    """)
+
+    st.code("""
+    # Stratified split to handle class imbalance
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=42)
+    """, language="python")
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Feature Scaling
+    st.markdown("✅ **Feature Scaling**")
+    st.markdown("""
+    - **Standardization** was applied to numerical features.
+                
+    - The scaler was **fitted on the training data** and **applied to both train and test sets**.
+    """)
+
+    st.code("""
+    # Standardization: Fit only on training data
+    scaler = StandardScaler()
+    X_train[features_scaler] = scaler.fit_transform(X_train[features_scaler])
+    X_test[features_scaler] = scaler.transform(X_test[features_scaler])
+    """, language="python")
+
+    st.markdown("<br>", unsafe_allow_html=True)  # Extra Space
+
+    # ✅ Dataset Dimensions
+    st.markdown("✅ **Dataset Dimensions**")
+    st.markdown("""
+    - Displays the shape of the training and testing sets.
+    """)
+
+# Copy of the original dataset for feature engineering and preprocessing
+    data_processed = data_final.copy()
+
+    # Drop unnecessary columns
+    data_processed = data_processed.drop(['AccID', 'birth_year', 'vehicleID', 'num_veh'], axis=1)
+
+
+    # Cyclical encoding for temporal features
+    data_processed['day_sin'] = np.sin(2 * np.pi * data_processed['day'] / 31)  # Assuming day ranges from 1 to 31
+    data_processed['day_cos'] = np.cos(2 * np.pi * data_processed['day'] / 31)
+
+    data_processed['month_sin'] = np.sin(2 * np.pi * data_processed['month'] / 12)
+    data_processed['month_cos'] = np.cos(2 * np.pi * data_processed['month'] / 12)
+
+    data_processed['time_sin'] = np.sin(2 * np.pi * data_processed['time'] / 86340000) 
+    data_processed['time_cos'] = np.cos(2 * np.pi * data_processed['time'] / 86340000)
+
+    data_processed.drop(columns=['day','month','time'],inplace=True)
+
+    # Selecting features and target variable
+    features_dummy = ['year', 'lum', 'atm_condition', 'collision_type',
+        'route_category', 'traffic_regime', 'total_number_lanes',
+        'reserved_lane_code', 'longitudinal_profile', 'plan',
+        'surface_condition', 'infra', 'accident_situation',
+        'traffic_direction', 'vehicle_category', 'fixed_obstacle',
+        'mobile_obstacle', 'initial_impact_point', 'manv', 'motor', 'seat',
+        'user_category', 'gender', 'reason_travel',
+        'safety_equipment1']
+    # These features will be standardized
+    features_scaler = ['lat', 'long', 'upstream_terminal_number', 'distance_upstream_terminal', 'maximum_speed', 'age']
+
+    # These features are between -1 and 1 and do not need any standardazations. 
+    features_temporal = ['day_sin', 'day_cos', 'month_sin', 'month_cos', 'time_sin', 'time_cos']
+
+    target = 'gravity'
+
+
+    X = data_processed.drop(columns=[target])
+    y = data_processed[target]
+
+    y = y.astype(int)
+
+    X = pd.get_dummies(X, columns=features_dummy, drop_first=True)
+
+    # stratify will split the dataset according to the distribution of the classes to compensate for imbalanced datasets.
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=42)
+
+    # Standardization: Fit only on the training data, then apply to both train and test
+    scaler = StandardScaler()
+    X_train[features_scaler] = scaler.fit_transform(X_train[features_scaler])
+    X_test[features_scaler] = scaler.transform(X_test[features_scaler])
+
+
+    # Capture dataset shapes
+    shape_info = f"""
+    Shape of X_train: {X_train.shape}
+    Shape of X_test: {X_test.shape}
+    """
+
+    st.code(shape_info, language="plaintext")
+
+    st.success("🎯 The dataset is now **preprocessed and ready** for model training!")
+
+
+
+
+    # st.subheader("2.2 Feature Engineering")
+    # st.write("We created new features such as 'time_of_day' and 'day_of_week' from the timestamp data to capture temporal patterns in accidents. These features are expected to improve the predictive power of the models.")
+
+    # st.subheader("2.3 Data Transformation")
+    # st.write("Categorical variables were encoded using one-hot encoding, and numerical features were scaled to ensure that all features contribute equally to the model training process.")
+
+    # st.subheader("2.4 Final Dataset")
+    # st.write("After preprocessing, the final dataset contains the following characteristics:")
+    # st.write("- Total samples: 450,000")
+    # st.write("- Features: 20")
+    # st.write("This dataset is now ready for modeling and analysis.")
 
 def part_3():
     st.header("Part 3: Modeling, Results, and Future Work")
