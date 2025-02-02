@@ -7,6 +7,8 @@ import plotly.express as px
 import shap
 from lime import lime_tabular
 import os
+from PIL import Image
+
 
 def main():
     st.set_page_config(page_title="Data Science Project Presentation", layout="wide")
@@ -236,6 +238,7 @@ def part_1():
     st.write("The next phase involves advanced modeling using machine learning techniques (Gradient Boosting, Decision Trees, and Random Forests), with further feature engineering to enhance model performance. These models aim to predict accident severity accurately, providing valuable insights for policymakers to improve road safety and reduce socio-economic impacts.")
 
     st.write("Overall, this data-driven approach aims to contribute significantly to road safety research, offering predictive insights to save lives and enhance traffic safety in France.")
+    
 def part_2():
     st.header("Part 2: Data Preprocessing and Feature Engineering")
 
@@ -331,47 +334,52 @@ def part_3():
     # Section 2: Feature Importance and Interpretability
     st.header("Feature Importance and Interpretability")
 
-    # SHAP Summary Plot
-    st.subheader("SHAP Summary Plot")
-    st.markdown("""
-    The SHAP summary plot shows the most important features influencing the model's predictions. 
-    Top features include **safety equipment**, **location**, and **maximum speed**.
+    # SHAP Analysis Dashboard
+    st.title("SHAP Analysis Dashboard")
+    st.write("""
+    This dashboard displays SHAP analysis for different machine learning models (XGBoost, LightGBM, and Random Forest). 
+    Each graph visualizes the feature importance and interaction values. Below each graph, you'll find the corresponding interpretations.
     """)
 
-    # Placeholder for SHAP Summary Plot
-    st.write("**SHAP Summary Plot**")
-    st.write("(Placeholder: Replace with actual SHAP plot)")
-    # Example code for SHAP plot (uncomment and replace with actual data)
-    # explainer = shap.TreeExplainer(model)
-    # shap_values = explainer.shap_values(X_test)
-    # fig, ax = plt.subplots(figsize=(8, 6))  # Resized graph
-    # shap.summary_plot(shap_values, X_test, show=False)
-    # st.pyplot(fig)
+    # Tabs for each model
+    tab_xgb, tab_lgb, tab_rf = st.tabs(["XGBoost", "LightGBM", "Random Forest"])
 
-    # LIME Interpretation
-    st.subheader("LIME Interpretation")
-    st.markdown("""
-    LIME provides local interpretability for individual predictions. For example, the absence of safety equipment 
-    and high speed are key factors in predicting severe injuries.
-    """)
+    # XGBoost SHAP analysis
+    with tab_xgb:
+        st.header("XGBoost SHAP Analysis")
+        xgb_image = Image.open("shap1 - xgboost.png")
+        st.image(xgb_image, caption="XGBoost SHAP Summary Plot", use_column_width=True)
+        st.subheader("Interpretation")
+        st.write("""
+        - **Top features**: `safety_equipment1_1`, `vehicle_category_7`, `lat`, and `maximum_speed` are the most influential features.
+        - **Patterns**: High values of `maximum_speed` (red dots) generally push predictions in a positive direction, indicating a higher likelihood of a particular outcome.
+        - **Feature importance**: The spread of the dots along the x-axis shows how much each feature contributes to the model’s output. Wider spread means a higher impact.
+        """)
 
-    # Placeholder for LIME Interpretation
-    st.write("**LIME Interpretation**")
-    st.write("(Placeholder: Replace with actual LIME explanation)")
-    # Example code for LIME plot (uncomment and replace with actual data)
-    # explainer_lime = lime_tabular.LimeTabularExplainer(
-    #     training_data=X_test.values,
-    #     feature_names=X_test.columns,
-    #     class_names=['Non-Severe', 'Severe'],
-    #     mode='classification'
-    # )
-    # exp = explainer_lime.explain_instance(
-    #     data_row=X_test.iloc[0],
-    #     predict_fn=model.predict_proba
-    # )
-    # fig = exp.as_pyplot_figure()
-    # st.pyplot(fig)
+    # LightGBM SHAP analysis
+    with tab_lgb:
+        st.header("LightGBM SHAP Analysis")
+        lgb_image = Image.open("shap1 - lightgbm.png")
+        st.image(lgb_image, caption="LightGBM SHAP Interaction Values", use_column_width=True)
+        st.subheader("Interpretation")
+        st.write("""
+        - **Interaction focus**: Columns like `year`, `lum`, `atm_condition`, and `collision_type` show their interaction with other features.
+        - **Patterns**: High values of `collision_type` interact strongly with other features, indicating significant influence on the model's predictions.
+        - **Balanced contributions**: The symmetric distribution of interaction values around 0 suggests well-balanced contributions between positive and negative impacts.
+        """)
 
+    # Random Forest SHAP analysis
+    with tab_rf:
+        st.header("Random Forest SHAP Analysis")
+        rf_image = Image.open("shap1 - random forest.png")
+        st.image(rf_image, caption="Random Forest SHAP Summary Plot", use_column_width=True)
+        st.subheader("Interpretation")
+        st.write("""
+        - **Top features**: `vehicle_category`, `seat`, `user_category`, and `fixed_obstacle` have the highest impact on predictions.
+        - **Patterns**: Features like `maximum_speed` and `age` exhibit diverse effects depending on whether their values are high or low (red or blue).
+        - **Comparison with XGBoost**: While many features are important in both models, the order of importance differs, indicating potential variations in how each algorithm processes data.
+        """)
+    
     # Section 3: Real-Life Recommendations
     st.header("Real-Life Recommendations")
     st.markdown("""
