@@ -26,21 +26,16 @@ with col1:
     month = st.number_input("Month of Accident", min_value=1, max_value=12, step=1)
     time = st.number_input("Time (Hour)", min_value=0, max_value=23, step=1)
     speed_limit = st.number_input("Speed Limit", min_value=10, max_value=130, step=10)
-    weather = st.selectbox("Weather Conditions", ["Clear", "Rain", "Fog", "Snow", "Other"])
-    road_type = st.selectbox("Road Type", ["Urban", "Rural", "Highway"])
+    atm_condition = st.selectbox("Weather Conditions", [1, 2, 3, 4, 5])
+    collision_type = st.selectbox("Collision Type", [1, 2, 3, 4, 5, 6])
 
 with col2:
-    light_conditions = st.selectbox("Lighting Conditions", ["Daylight", "Dark - Street lights", "Dark - No lights"])
-    vehicle_type = st.selectbox("Vehicle Type", ["Car", "Motorcycle", "Bicycle", "Truck", "Bus", "Other"])
-    driver_age = st.number_input("Driver Age", min_value=18, max_value=100, step=1)
-    seatbelt_used = st.selectbox("Seatbelt Used", ["No", "Yes"])
-
-# Encode categorical values
-weather_dict = {"Clear": 0, "Rain": 1, "Fog": 2, "Snow": 3, "Other": 4}
-road_dict = {"Urban": 0, "Rural": 1, "Highway": 2}
-light_dict = {"Daylight": 0, "Dark - Street lights": 1, "Dark - No lights": 2}
-vehicle_dict = {"Car": 0, "Motorcycle": 1, "Bicycle": 2, "Truck": 3, "Bus": 4, "Other": 5}
-seatbelt_dict = {"No": 0, "Yes": 1}
+    lum = st.selectbox("Lighting Conditions", [1, 2, 3, 4, 5])
+    user_category = st.selectbox("User Category", [1, 2, 3, 4])
+    age = st.number_input("Age", min_value=10, max_value=100, step=1)
+    gender = st.selectbox("Gender", [1, 2])
+    reason_travel = st.selectbox("Reason for Travel", [0, 1, 2, 3, 4, 5])
+    safety_equipment1 = st.selectbox("Safety Equipment Used", [1, 2, 3, 4, 5, 6])
 
 # Preprocess Input Data
 input_data = pd.DataFrame({
@@ -54,25 +49,18 @@ input_data = pd.DataFrame({
     "time_sin": [np.sin(2 * np.pi * time / 24)],
     "time_cos": [np.cos(2 * np.pi * time / 24)],
     "speed_limit": [speed_limit],
-    "weather": [weather_dict[weather]],
-    "road_type": [road_dict[road_type]],
-    "light_conditions": [light_dict[light_conditions]],
-    "vehicle_type": [vehicle_dict[vehicle_type]],
-    "driver_age": [driver_age],
-    "seatbelt_used": [seatbelt_dict[seatbelt_used]]
+    "atm_condition": [atm_condition],
+    "collision_type": [collision_type],
+    "lum": [lum],
+    "user_category": [user_category],
+    "age": [age],
+    "gender": [gender],
+    "reason_travel": [reason_travel],
+    "safety_equipment1": [safety_equipment1]
 })
 
 # Load model and scaler
 model, scaler = load_model()
-
-# Ensure input features match expected features
-expected_features = scaler.feature_names_in_
-for col in expected_features:
-    if col not in input_data.columns:
-        input_data[col] = 0  # Add missing features with default values
-
-# Keep only expected columns, in correct order
-input_data = input_data[expected_features]
 
 # Normalize input
 input_data_scaled = scaler.transform(input_data)
