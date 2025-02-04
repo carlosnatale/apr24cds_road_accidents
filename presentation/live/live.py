@@ -28,9 +28,15 @@ def preprocess_input(user_input, scaler):
     # Drop original time variables
     df.drop(columns=['day', 'month', 'time'], inplace=True)
     
-    # Standardize numerical features
+    # List of numerical features expected by the scaler
     numerical_features = ['lat', 'long', 'upstream_terminal_number', 'distance_upstream_terminal', 'maximum_speed', 'age']
-    df[numerical_features] = scaler.transform(df[numerical_features])
+    
+    # Ensure only existing columns are transformed
+    existing_features = [col for col in numerical_features if col in df.columns]
+    
+    # Apply transformation only to existing columns
+    if existing_features:
+        df[existing_features] = scaler.transform(df[existing_features])
     
     return df
 
