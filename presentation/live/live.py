@@ -31,13 +31,16 @@ def preprocess_input(user_input, scaler):
     # List of numerical features expected by the scaler
     numerical_features = ['lat', 'long', 'upstream_terminal_number', 'distance_upstream_terminal', 'maximum_speed', 'age']
     
-    # Ensure all expected features exist in the DataFrame, filling missing ones with 0
+    # Ensure all expected features exist in the DataFrame
     for col in numerical_features:
         if col not in df.columns:
             df[col] = 0  # Default value for missing features
     
+    # Reorder columns to match training set
+    df = df[numerical_features]
+    
     # Apply transformation to all numerical features
-    df[numerical_features] = scaler.transform(df[numerical_features])
+    df = pd.DataFrame(scaler.transform(df), columns=numerical_features)
     
     return df
 
