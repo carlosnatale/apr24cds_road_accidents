@@ -33,7 +33,6 @@ with col2:
     light_conditions = st.selectbox("Lighting Conditions", ["Daylight", "Dark - Street lights", "Dark - No lights"])
     vehicle_type = st.selectbox("Vehicle Type", ["Car", "Motorcycle", "Bicycle", "Truck", "Bus", "Other"])
     driver_age = st.number_input("Driver Age", min_value=18, max_value=100, step=1)
-    alcohol_involvement = st.selectbox("Alcohol Involved", ["No", "Yes"])
     seatbelt_used = st.selectbox("Seatbelt Used", ["No", "Yes"])
 
 # Encode categorical values
@@ -41,7 +40,6 @@ weather_dict = {"Clear": 0, "Rain": 1, "Fog": 2, "Snow": 3, "Other": 4}
 road_dict = {"Urban": 0, "Rural": 1, "Highway": 2}
 light_dict = {"Daylight": 0, "Dark - Street lights": 1, "Dark - No lights": 2}
 vehicle_dict = {"Car": 0, "Motorcycle": 1, "Bicycle": 2, "Truck": 3, "Bus": 4, "Other": 5}
-alcohol_dict = {"No": 0, "Yes": 1}
 seatbelt_dict = {"No": 0, "Yes": 1}
 
 # Preprocess Input Data
@@ -61,12 +59,20 @@ input_data = pd.DataFrame({
     "light_conditions": [light_dict[light_conditions]],
     "vehicle_type": [vehicle_dict[vehicle_type]],
     "driver_age": [driver_age],
-    "alcohol_involvement": [alcohol_dict[alcohol_involvement]],
     "seatbelt_used": [seatbelt_dict[seatbelt_used]]
 })
 
 # Load model and scaler
 model, scaler = load_model()
+
+# Ensure input features match expected features
+expected_features = scaler.feature_names_in_
+for col in expected_features:
+    if col not in input_data.columns:
+        input_data[col] = 0  # Add missing features with default values
+
+# Keep only expected columns, in correct order
+input_data = input_data[expected_features]
 
 # Normalize input
 input_data_scaled = scaler.transform(input_data)
