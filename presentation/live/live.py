@@ -6,11 +6,12 @@ import xgboost as xgb
 from sklearn.preprocessing import StandardScaler
 
 # Load trained model and scaler
-MODEL_PATH = "xgboost_model.pkl"
+MODEL_PATH = "xgboost_model.json"  # Updated to JSON format
 SCALER_PATH = "scaler.pkl"
 
 def load_model():
-    model = joblib.load(MODEL_PATH)
+    model = xgb.Booster()
+    model.load_model(MODEL_PATH)  # Load from JSON
     scaler = joblib.load(SCALER_PATH)
     return model, scaler
 
@@ -67,6 +68,7 @@ input_data_scaled = scaler.transform(input_data)
 
 # Make Prediction
 if st.button("Predict Injury Severity"):
-    prediction = model.predict(input_data_scaled)
-    severity = "Severely Injured" if prediction[0] == 1 else "Slightly Injured"
+    dmatrix = xgb.DMatrix(input_data_scaled)  # Convert input for Booster
+    prediction = model.predict(dmatrix)
+    severity = "Severely Injured" if prediction[0] > 0.5 else "Slightly Injured"  # Adjust threshold if needed
     st.success(f"Predicted Injury Severity: {severity}")
