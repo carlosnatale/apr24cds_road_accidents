@@ -38,27 +38,37 @@ with col2:
     reason_travel = st.selectbox("Reason for Travel", [0, 1, 2, 3, 4, 5])
     safety_equipment1 = st.selectbox("Safety Equipment Used", [1, 2, 3, 4, 5, 6])
 
+# Ensure input features match the scaler
+expected_features = [
+    "day", "month", "time", "day_sin", "day_cos", "month_sin", "month_cos", "time_sin", "time_cos", 
+    "speed_limit", "atm_condition", "collision_type", "lum", "user_category", "age", "gender", 
+    "reason_travel", "safety_equipment1"
+]
+
 # Preprocess Input Data
-input_data = pd.DataFrame({
-    "day": [day],
-    "month": [month],
-    "time": [time],
-    "day_sin": [np.sin(2 * np.pi * day / 31)],
-    "day_cos": [np.cos(2 * np.pi * day / 31)],
-    "month_sin": [np.sin(2 * np.pi * month / 12)],
-    "month_cos": [np.cos(2 * np.pi * month / 12)],
-    "time_sin": [np.sin(2 * np.pi * time / 24)],
-    "time_cos": [np.cos(2 * np.pi * time / 24)],
-    "speed_limit": [speed_limit],
-    "atm_condition": [atm_condition],
-    "collision_type": [collision_type],
-    "lum": [lum],
-    "user_category": [user_category],
-    "age": [age],
-    "gender": [gender],
-    "reason_travel": [reason_travel],
-    "safety_equipment1": [safety_equipment1]
-})
+input_data = pd.DataFrame([{  
+    "day": day,
+    "month": month,
+    "time": time,
+    "day_sin": np.sin(2 * np.pi * day / 31),
+    "day_cos": np.cos(2 * np.pi * day / 31),
+    "month_sin": np.sin(2 * np.pi * month / 12),
+    "month_cos": np.cos(2 * np.pi * month / 12),
+    "time_sin": np.sin(2 * np.pi * time / 24),
+    "time_cos": np.cos(2 * np.pi * time / 24),
+    "speed_limit": speed_limit,
+    "atm_condition": atm_condition,
+    "collision_type": collision_type,
+    "lum": lum,
+    "user_category": user_category,
+    "age": age,
+    "gender": gender,
+    "reason_travel": reason_travel,
+    "safety_equipment1": safety_equipment1
+}])
+
+# Ensure input matches scaler's expected features
+input_data = input_data[expected_features]
 
 # Load model and scaler
 model, scaler = load_model()
