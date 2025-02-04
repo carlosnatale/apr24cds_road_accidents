@@ -6,14 +6,16 @@ from xgboost import XGBClassifier
 from sklearn.preprocessing import StandardScaler
 
 def load_model():
-    """Load the trained XGBoost model and the standard scaler."""
+    """Load the trained XGBoost model, the standard scaler, and feature names."""
     with open("model.pkl", "rb") as file:
         model = pickle.load(file)
     with open("scaler.pkl", "rb") as file:
         scaler = pickle.load(file)
-    return model, scaler
+    with open("feature_names.pkl", "rb") as file:
+        feature_names = pickle.load(file)  # Ensure feature order matches training
+    return model, scaler, feature_names
 
-def preprocess_input(user_input, scaler):
+def preprocess_input(user_input, scaler, feature_names):
     """Preprocess user input to match the training format."""
     df = pd.DataFrame([user_input])
     
@@ -36,11 +38,19 @@ def preprocess_input(user_input, scaler):
         if col not in df.columns:
             df[col] = 0  # Default value for missing features
     
-    # Reorder columns to match training set
-    df = df[numerical_features]
+    # Standardize numerical features
+    df[numerical_features] = scaler.transform(df[numerical_features])
     
-    # Apply transformation to all numerical features
-    df = pd.DataFrame(scaler.transform(df), columns=numerical_features)
+    # One-hot encode categorical features
+    categorical_features = ['lum', 'atm_condition', 'collision_type', 'route_category',
+                            'traffic_regime', 'vehicle_category', 'user_category', 'gender']
+    df = pd.get_dummies(df, columns=categorical_features)
+    
+    # Ensure all training features exist and are in the correct order
+    for col in feature_names:
+        if col not in df.columns:
+            df[col] = 0  # Add missing categorical feature
+    df = df[feature_names]  # Ensure correct column order
     
     return df
 
@@ -48,8 +58,8 @@ def main():
     st.title("Accident Severity Prediction")
     st.write("Enter accident details to predict severity.")
     
-    # Load model and scaler
-    model, scaler = load_model()
+    # Load model, scaler, and feature names
+    model, scaler, feature_names = load_model()
     
     # User input fields
     user_input = {
@@ -60,11 +70,19 @@ def main():
         "long": st.number_input("Longitude", value=2.35),
         "maximum_speed": st.number_input("Max Speed (km/h)", value=50),
         "age": st.number_input("Driver Age", min_value=18, max_value=100, value=30),
+        "lum": st.selectbox("Lighting Condition", options=[1, 2, 3, 4, 5]),
+        "atm_condition": st.selectbox("Weather Condition", options=[1, 2, 3, 4, 5]),
+        "collision_type": st.selectbox("Collision Type", options=[1, 2, 3, 4, 5, 6]),
+        "route_category": st.selectbox("Route Category", options=[1, 2, 3, 4]),
+        "traffic_regime": st.selectbox("Traffic Regime", options=[1, 2, 3, 4]),
+        "vehicle_category": st.selectbox("Vehicle Category", options=[1, 2, 3, 4, 5]),
+        "user_category": st.selectbox("User Category", options=[1, 2, 3, 4]),
+        "gender": st.selectbox("Gender", options=[1, 2]),
     }
     
     # Prediction button
     if st.button("Predict Severity"):
-        processed_input = preprocess_input(user_input, scaler)
+        processed_input = preprocess_input(user_input, scaler, feature_names)
         prediction = model.predict(processed_input)[0]
         st.success(f"Predicted Severity: {prediction}")
 
