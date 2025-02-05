@@ -255,6 +255,10 @@ def part_1():
     st.write("Overall, this data-driven approach aims to contribute significantly to road safety research, offering predictive insights to save lives and enhance traffic safety in France.")
     
 
+
+
+
+
 def part_2():
     st.header("Part 2: Data Preprocessing and Feature Engineering")
     #st.markdown("Extensive data cleaning and processing were necessary to prepare the dataset for analysis. The treatment process involved key steps:")
@@ -412,6 +416,14 @@ def part_2():
     st.code(duplicate_output, language="plaintext")
 
     st.success("🎯 The dataset is now **clean, consistent, and ready** for further analysis!")
+
+
+
+
+
+
+
+
 
     st.title("🔧 Feature Engineering & Data Transformation")
     #st.markdown("This section covers the preprocessing steps applied to prepare the dataset for modeling.")
@@ -597,6 +609,7 @@ def part_2():
 
     target = 'gravity'
 
+
     X = data_processed.drop(columns=[target])
     y = data_processed[target]
 
@@ -612,6 +625,7 @@ def part_2():
     X_train[features_scaler] = scaler.fit_transform(X_train[features_scaler])
     X_test[features_scaler] = scaler.transform(X_test[features_scaler])
 
+
     # Capture dataset shapes
     shape_info = f"""
     Shape of X_train: {X_train.shape}
@@ -621,6 +635,9 @@ def part_2():
     st.code(shape_info, language="plaintext")
 
     st.success("🎯 The dataset is now **preprocessed and ready** for model training!")
+
+
+
 
     # st.subheader("2.2 Feature Engineering")
     # st.write("We created new features such as 'time_of_day' and 'day_of_week' from the timestamp data to capture temporal patterns in accidents. These features are expected to improve the predictive power of the models.")
