@@ -110,30 +110,66 @@ def preprocess_input(user_input, scaler, feature_names):
     return df
 
 def main():
-    st.title("Accident Severity Prediction")
-    st.write("Enter accident details to predict severity.")
-    
+    st.set_page_config(page_title="Accident Severity Prediction", page_icon="🚦", layout="wide")
+
+    st.markdown(
+        """
+        <style>
+        .main {
+            background-color: #f4f4f4;
+        }
+        .stButton button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        .stButton button:hover {
+            background-color: #45a049;
+        }
+        .stSelectbox label, .stNumberInput label {
+            font-weight: bold;
+        }
+        .stSuccess {
+            color: green;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.title("🚦 Accident Severity Prediction")
+    st.write("Enter accident details to predict severity. This tool helps identify risk levels for road safety.")
+
     # Load model, scaler, and feature names
     model, scaler, feature_names = load_model()
-    
+
     # User input fields with mappings applied
+    st.sidebar.header("Input Details")
     user_input = {
-        "day": st.number_input("Day", min_value=1, max_value=31, value=15),
-        "month": st.number_input("Month", min_value=1, max_value=12, value=6),
-        "time": st.number_input("Time (HHMMSS)", min_value=0, max_value=235959, value=120000),
-        "lat": st.number_input("Latitude", value=48.85),
-        "long": st.number_input("Longitude", value=2.35),
-        "maximum_speed": st.number_input("Max Speed (km/h)", value=50),
-        "age": st.number_input("Driver Age", min_value=18, max_value=100, value=30),
-        "lum": st.selectbox("Lighting Condition", options=list(MAPPINGS["lum"].keys()), format_func=lambda x: MAPPINGS["lum"][x]),
-        "atm_condition": st.selectbox("Weather Condition", options=list(MAPPINGS["atm_condition"].keys()), format_func=lambda x: MAPPINGS["atm_condition"][x]),
-        "collision_type": st.selectbox("Collision Type", options=list(MAPPINGS["collision_type"].keys()), format_func=lambda x: MAPPINGS["collision_type"][x]),
-        "route_category": st.selectbox("Route Category", options=list(MAPPINGS["route_category"].keys()), format_func=lambda x: MAPPINGS["route_category"][x]),
-        "traffic_regime": st.selectbox("Traffic Regime", options=list(MAPPINGS["traffic_regime"].keys()), format_func=lambda x: MAPPINGS["traffic_regime"][x]),
-        "vehicle_category": st.selectbox("Vehicle Category", options=list(MAPPINGS["vehicle_category"].keys()), format_func=lambda x: MAPPINGS["vehicle_category"][x]),
-        "gender": st.selectbox("Gender", options=list(MAPPINGS["gender"].keys()), format_func=lambda x: MAPPINGS["gender"][x]),
+        "day": st.sidebar.number_input("Day", min_value=1, max_value=31, value=15),
+        "month": st.sidebar.number_input("Month", min_value=1, max_value=12, value=6),
+        "time": st.sidebar.number_input("Time (HHMMSS)", min_value=0, max_value=235959, value=120000),
+        "lat": st.sidebar.number_input("Latitude", value=48.85),
+        "long": st.sidebar.number_input("Longitude", value=2.35),
+        "maximum_speed": st.sidebar.number_input("Max Speed (km/h)", value=50),
+        "age": st.sidebar.number_input("Driver Age", min_value=18, max_value=100, value=30),
+        "lum": st.sidebar.selectbox("Lighting Condition", options=list(MAPPINGS["lum"].keys()), format_func=lambda x: MAPPINGS["lum"][x]),
+        "atm_condition": st.sidebar.selectbox("Weather Condition", options=list(MAPPINGS["atm_condition"].keys()), format_func=lambda x: MAPPINGS["atm_condition"][x]),
+        "collision_type": st.sidebar.selectbox("Collision Type", options=list(MAPPINGS["collision_type"].keys()), format_func=lambda x: MAPPINGS["collision_type"][x]),
+        "route_category": st.sidebar.selectbox("Route Category", options=list(MAPPINGS["route_category"].keys()), format_func=lambda x: MAPPINGS["route_category"][x]),
+        "traffic_regime": st.sidebar.selectbox("Traffic Regime", options=list(MAPPINGS["traffic_regime"].keys()), format_func=lambda x: MAPPINGS["traffic_regime"][x]),
+        "vehicle_category": st.sidebar.selectbox("Vehicle Category", options=list(MAPPINGS["vehicle_category"].keys()), format_func=lambda x: MAPPINGS["vehicle_category"][x]),
+        "gender": st.sidebar.selectbox("Gender", options=list(MAPPINGS["gender"].keys()), format_func=lambda x: MAPPINGS["gender"][x]),
     }
-    
+
     # Prediction button
     if st.button("Predict Severity"):
         processed_input = preprocess_input(user_input, scaler, feature_names)
@@ -143,9 +179,10 @@ def main():
             1: "Severely injured or Fatal Accident"
         }
         st.success(f"Predicted Severity: {severity_mapping[prediction]}")
-    
+
     # Download section
-    st.subheader("Download Model Files")
+    st.subheader("📥 Download Model Files")
+    st.write("You can download the model files below for further use:")
     with open("model.pkl", "rb") as f:
         st.download_button("Download Model", f, file_name="model.pkl")
     with open("scaler.pkl", "rb") as f:
