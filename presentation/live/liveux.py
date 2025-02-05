@@ -50,6 +50,11 @@ def preprocess_input(user_input, scaler, feature_names):
     # One-hot encode categorical features
     categorical_features = ['lum', 'atm_condition', 'collision_type', 'route_category',
                             'traffic_regime', 'vehicle_category', 'user_category', 'gender']
+    
+    for col in categorical_features:
+        if col not in df.columns:
+            df[col] = "Unknown"  # Assign a default category to avoid KeyError
+    
     df = pd.get_dummies(df, columns=categorical_features, drop_first=True)
     
     # Ensure all training features exist and are in correct order
