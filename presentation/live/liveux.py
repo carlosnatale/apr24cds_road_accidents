@@ -5,7 +5,7 @@ import numpy as np
 from xgboost import XGBClassifier
 from sklearn.preprocessing import StandardScaler
 
-# Set page configuration as the first Streamlit command
+# Set page configuration
 st.set_page_config(page_title="Accident Severity Predictor", page_icon="🚦", layout="wide")
 
 # Load model, scaler, and feature names
@@ -26,45 +26,38 @@ def load_model():
 def preprocess_input(user_input, scaler, feature_names):
     try:
         df = pd.DataFrame([user_input])
+
+        # Time-based feature transformations
         df['day_sin'] = np.sin(2 * np.pi * df['day'] / 31)
         df['day_cos'] = np.cos(2 * np.pi * df['day'] / 31)
         df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
         df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
         df.drop(columns=['day', 'month', 'time'], inplace=True)
-        
-        numerical_features = ['lat', 'long', 'maximum_speed', 'age']
+
+        # Define numerical features
+        numerical_features = ['lat', 'long', 'maximum_speed', 'age', 'day_sin', 'day_cos', 'month_sin', 'month_cos']
         df = df.reindex(columns=numerical_features, fill_value=0)
         df[numerical_features] = scaler.transform(df[numerical_features])
-        df = df[feature_names]
+        
+        # Ensure alignment with model features
+        df = df.reindex(columns=feature_names, fill_value=0)
         return df
     except Exception as e:
         st.error(f"Error in preprocessing: {e}")
         return None
 
-# Custom CSS for styling
-st.markdown("""
-    <style>
-    .stButton>button { background-color: #0073e6; color: white; border-radius: 8px; font-weight: bold; }
-    .stButton>button:hover { background-color: #005bb5; }
-    .stSidebar { background-color: #f0f2f6; padding: 10px; }
-    .stMarkdown { font-size: 16px; }
-    .stSuccess { color: green; font-size: 18px; font-weight: bold; }
-    .container { border: 1px solid #ddd; padding: 15px; border-radius: 10px; background-color: #ffffff; }
-    </style>
-    """, unsafe_allow_html=True)
-
-# App layout
+# UI Layout
 st.title("🚦 Accident Severity Prediction")
 st.write("This tool helps assess accident severity based on various conditions.")
 
 # Sidebar Inputs
 st.sidebar.header("📌 Enter Accident Details")
 with st.sidebar.expander("🕒 Time & Location", expanded=True):
-    day = st.number_input("Day", min_value=1, max_value=31, value=15, help="Select the day of the accident")
-    month = st.number_input("Month", min_value=1, max_value=12, value=6, help="Select the month of the accident")
-    time = st.number_input("Time (HHMMSS)", min_value=0, max_value=235959, value=120000, help="Enter time in HHMMSS format")
-    lat = st.number_input("Latitude", value=48.85, help="Enter the latitude of the accident location")
-    long = st.number_input("Longitude", value=2.35, help="Enter the longitude of the accident location")
+    day = st.number_input("Day", min_value=1, max_value=31, value=15)
+    month = st.number_input("Month", min_value=1, max_value=12, value=6)
+    time = st.number_input("Time (HHMMSS)", min_value=0, max_value=235959, value=120000)
+    lat = st.number_input("Latitude", value=48.85)
+    long = st.number_input("Longitude", value=2.35)
 
 with st.sidebar.expander("🚗 Vehicle & Driver", expanded=False):
     max_speed = st.number_input("Max Speed (km/h)", value=50)
