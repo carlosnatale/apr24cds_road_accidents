@@ -785,7 +785,12 @@ def part_4():
     st.header("Live Demo")
 
     # Title and Introduction
-    st.title("Accident Severity Prediction Analysis")
-    
+
+import liveux  
+
+def part_4():
+    st.header("Live Demo")
+    liveux.run_live_demo()  
+        
 if __name__ == "__main__":
     main()
