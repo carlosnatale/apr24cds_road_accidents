@@ -9,3 +9,7 @@ shap
 lime
 pillow
 scikit-learn
+joblib
+xgboost
+sklearn.preprocessing 
+StandardScaler
