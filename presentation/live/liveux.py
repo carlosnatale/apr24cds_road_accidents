@@ -34,7 +34,10 @@ def preprocess_input(user_input, scaler, feature_names):
         df['time_cos'] = np.cos(2 * np.pi * df['time'] / 86340000)
         df.drop(columns=['day', 'month', 'time'], inplace=True)
         
-        numerical_features = ['lat', 'long', 'maximum_speed', 'age']
+        numerical_features = ['lat', 'long', 'maximum_speed', 'age', 'day_sin', 'day_cos', 'month_sin', 'month_cos', 'time_sin', 'time_cos']
+        for feature in numerical_features:
+            if feature not in df.columns:
+                df[feature] = 0  # Ensure all expected features exist
         df[numerical_features] = scaler.transform(df[numerical_features])
         df = df[feature_names]
         return df
