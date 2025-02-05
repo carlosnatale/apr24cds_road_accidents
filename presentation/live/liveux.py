@@ -10,29 +10,37 @@ st.set_page_config(page_title="Accident Severity Predictor", page_icon="🚦", l
 
 # Load model, scaler, and feature names
 def load_model():
-    with open("model.pkl", "rb") as file:
-        model = pickle.load(file)
-    with open("scaler.pkl", "rb") as file:
-        scaler = pickle.load(file)
-    with open("feature_names.pkl", "rb") as file:
-        feature_names = pickle.load(file)
-    return model, scaler, feature_names
+    try:
+        with open("model.pkl", "rb") as file:
+            model = pickle.load(file)
+        with open("scaler.pkl", "rb") as file:
+            scaler = pickle.load(file)
+        with open("feature_names.pkl", "rb") as file:
+            feature_names = pickle.load(file)
+        return model, scaler, feature_names
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
+        return None, None, None
 
 # Preprocess user input
 def preprocess_input(user_input, scaler, feature_names):
-    df = pd.DataFrame([user_input])
-    df['day_sin'] = np.sin(2 * np.pi * df['day'] / 31)
-    df['day_cos'] = np.cos(2 * np.pi * df['day'] / 31)
-    df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
-    df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
-    df['time_sin'] = np.sin(2 * np.pi * df['time'] / 86340000)
-    df['time_cos'] = np.cos(2 * np.pi * df['time'] / 86340000)
-    df.drop(columns=['day', 'month', 'time'], inplace=True)
-    
-    numerical_features = ['lat', 'long', 'maximum_speed', 'age']
-    df[numerical_features] = scaler.transform(df[numerical_features])
-    df = df[feature_names]
-    return df
+    try:
+        df = pd.DataFrame([user_input])
+        df['day_sin'] = np.sin(2 * np.pi * df['day'] / 31)
+        df['day_cos'] = np.cos(2 * np.pi * df['day'] / 31)
+        df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
+        df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
+        df['time_sin'] = np.sin(2 * np.pi * df['time'] / 86340000)
+        df['time_cos'] = np.cos(2 * np.pi * df['time'] / 86340000)
+        df.drop(columns=['day', 'month', 'time'], inplace=True)
+        
+        numerical_features = ['lat', 'long', 'maximum_speed', 'age']
+        df[numerical_features] = scaler.transform(df[numerical_features])
+        df = df[feature_names]
+        return df
+    except Exception as e:
+        st.error(f"Error in preprocessing: {e}")
+        return None
 
 # Custom CSS for styling
 st.markdown("""
@@ -72,14 +80,16 @@ with st.sidebar.expander("🌦 Environmental Conditions", expanded=False):
 
 # Prediction Section
 st.markdown("### 🔍 Prediction Result")
-with st.spinner("Analyzing accident details..."):
-    if st.button("🚀 Predict Severity"):
+if st.button("🚀 Predict Severity"):
+    with st.spinner("Analyzing accident details..."):
         model, scaler, feature_names = load_model()
-        user_input = {"day": day, "month": month, "time": time, "lat": lat, "long": long, "maximum_speed": max_speed, "age": age}
-        processed_input = preprocess_input(user_input, scaler, feature_names)
-        prediction = model.predict(processed_input)[0]
-        severity_mapping = {0: "🟢 Minor Injury or No Injury", 1: "🔴 Severe Injury or Fatal"}
-        st.success(f"**Prediction: {severity_mapping[prediction]}**")
+        if model is not None:
+            user_input = {"day": day, "month": month, "time": time, "lat": lat, "long": long, "maximum_speed": max_speed, "age": age}
+            processed_input = preprocess_input(user_input, scaler, feature_names)
+            if processed_input is not None:
+                prediction = model.predict(processed_input)[0]
+                severity_mapping = {0: "🟢 Minor Injury or No Injury", 1: "🔴 Severe Injury or Fatal"}
+                st.success(f"**Prediction: {severity_mapping[prediction]}**")
 
 # Download Section
 st.markdown("### 📥 Download Model Files")
