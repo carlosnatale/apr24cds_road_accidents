@@ -5,7 +5,7 @@ import numpy as np
 from xgboost import XGBClassifier
 from sklearn.preprocessing import StandardScaler
 
-# Set page configuration
+# Set Streamlit page configuration
 st.set_page_config(page_title="Accident Severity Predictor", page_icon="🚦", layout="wide")
 
 # Load model, scaler, and feature names
@@ -24,7 +24,6 @@ def load_model():
 
 # Preprocess user input
 def preprocess_input(user_input, scaler, feature_names):
-    """Preprocess user input to match the training format."""
     df = pd.DataFrame([user_input])
     
     # Cyclical encoding for time variables
@@ -38,30 +37,26 @@ def preprocess_input(user_input, scaler, feature_names):
     # Drop original time variables
     df.drop(columns=['day', 'month', 'time'], inplace=True)
     
-    # List of numerical features expected by the scaler
+    # Ensure numerical features exist in the DataFrame
     numerical_features = ['lat', 'long', 'upstream_terminal_number', 'distance_upstream_terminal', 'maximum_speed', 'age']
-    
-    # Ensure all expected features exist in the DataFrame
     for col in numerical_features:
         if col not in df.columns:
-            df[col] = 0  # Default value for missing features
+            df[col] = 0  # Set default value if missing
     
-    # Standardize numerical features
-    df[numerical_features] = scaler.transform(df[numerical_features])
+    # Standardize numerical features if scaler is available
+    if scaler is not None:
+        df[numerical_features] = scaler.transform(df[numerical_features])
     
     # One-hot encode categorical features
     categorical_features = ['lum', 'atm_condition', 'collision_type', 'route_category',
                             'traffic_regime', 'vehicle_category', 'user_category', 'gender']
-    for col in categorical_features:
-        if col not in df.columns:
-            df[col] = 0  # Add missing categorical features with a default value
-    df = pd.get_dummies(df, columns=categorical_features)
+    df = pd.get_dummies(df, columns=categorical_features, drop_first=True)
     
-    # Ensure all training features exist and are in the correct order
+    # Ensure all training features exist and are in correct order
     for col in feature_names:
         if col not in df.columns:
-            df[col] = 0  # Add missing categorical feature
-    df = df[feature_names]  # Ensure correct column order
+            df[col] = 0  # Add missing categorical features
+    df = df[feature_names]
     
     return df
 
@@ -82,6 +77,8 @@ with st.sidebar.expander("🚗 Vehicle & Driver", expanded=False):
     max_speed = st.number_input("Max Speed (km/h)", value=50)
     age = st.number_input("Driver Age", min_value=18, max_value=100, value=30)
     gender = st.selectbox("Gender", ["Male", "Female"])
+    upstream_terminal_number = st.number_input("Upstream Terminal Number", min_value=0, value=0)
+    distance_upstream_terminal = st.number_input("Distance to Upstream Terminal (m)", min_value=0, value=0)
 
 with st.sidebar.expander("🌦 Environmental Conditions", expanded=False):
     lum = st.selectbox("Lighting Condition", ["Daylight", "Night with public lighting"])
@@ -95,7 +92,13 @@ if st.button("🚀 Predict Severity"):
     with st.spinner("Analyzing accident details..."):
         model, scaler, feature_names = load_model()
         if model is not None:
-            user_input = {"day": day, "month": month, "time": time, "lat": lat, "long": long, "maximum_speed": max_speed, "age": age}
+            user_input = {
+                "day": day, "month": month, "time": time,
+                "lat": lat, "long": long,
+                "maximum_speed": max_speed, "age": age,
+                "upstream_terminal_number": upstream_terminal_number,
+                "distance_upstream_terminal": distance_upstream_terminal
+            }
             processed_input = preprocess_input(user_input, scaler, feature_names)
             if processed_input is not None:
                 prediction = model.predict(processed_input)[0]
