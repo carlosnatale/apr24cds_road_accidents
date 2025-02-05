@@ -24,34 +24,46 @@ def load_model():
 
 # Preprocess user input
 def preprocess_input(user_input, scaler, feature_names):
-    try:
-        df = pd.DataFrame([user_input])
-
-        # Time-based feature transformations
-        df['day_sin'] = np.sin(2 * np.pi * df['day'] / 31)
-        df['day_cos'] = np.cos(2 * np.pi * df['day'] / 31)
-        df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
-        df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
-        df.drop(columns=['day', 'month', 'time'], inplace=True)
-
-        # Identify features used in StandardScaler
-        scaler_features = scaler.feature_names_in_  # Extract features from trained scaler
-
-        # Ensure only the required features are scaled
-        scaled_df = df[scaler_features].copy()  # Select only the expected features
-        scaled_df[scaler_features] = scaler.transform(scaled_df)
-
-        # Merge scaled values with the rest of the required features
-        df.update(scaled_df)
-
-        # Ensure final feature alignment with the model
-        df = df.reindex(columns=feature_names, fill_value=0)
-
-        return df
-    except Exception as e:
-        st.error(f"Error in preprocessing: {e}")
-        return None
-
+    """Preprocess user input to match the training format."""
+    df = pd.DataFrame([user_input])
+    
+    # Cyclical encoding for time variables
+    df['day_sin'] = np.sin(2 * np.pi * df['day'] / 31)
+    df['day_cos'] = np.cos(2 * np.pi * df['day'] / 31)
+    df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
+    df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
+    df['time_sin'] = np.sin(2 * np.pi * df['time'] / 86340000)
+    df['time_cos'] = np.cos(2 * np.pi * df['time'] / 86340000)
+    
+    # Drop original time variables
+    df.drop(columns=['day', 'month', 'time'], inplace=True)
+    
+    # List of numerical features expected by the scaler
+    numerical_features = ['lat', 'long', 'upstream_terminal_number', 'distance_upstream_terminal', 'maximum_speed', 'age']
+    
+    # Ensure all expected features exist in the DataFrame
+    for col in numerical_features:
+        if col not in df.columns:
+            df[col] = 0  # Default value for missing features
+    
+    # Standardize numerical features
+    df[numerical_features] = scaler.transform(df[numerical_features])
+    
+    # One-hot encode categorical features
+    categorical_features = ['lum', 'atm_condition', 'collision_type', 'route_category',
+                            'traffic_regime', 'vehicle_category', 'user_category', 'gender']
+    for col in categorical_features:
+        if col not in df.columns:
+            df[col] = 0  # Add missing categorical features with a default value
+    df = pd.get_dummies(df, columns=categorical_features)
+    
+    # Ensure all training features exist and are in the correct order
+    for col in feature_names:
+        if col not in df.columns:
+            df[col] = 0  # Add missing categorical feature
+    df = df[feature_names]  # Ensure correct column order
+    
+    return df
 
 # UI Layout
 st.title("🚦 Accident Severity Prediction")
