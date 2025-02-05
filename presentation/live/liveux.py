@@ -5,6 +5,9 @@ import numpy as np
 from xgboost import XGBClassifier
 from sklearn.preprocessing import StandardScaler
 
+# Set page configuration as the first Streamlit command
+st.set_page_config(page_title="Accident Severity Predictor", page_icon="🚦", layout="wide")
+
 # Load model, scaler, and feature names
 def load_model():
     with open("model.pkl", "rb") as file:
@@ -44,7 +47,6 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # App layout
-st.set_page_config(page_title="Accident Severity Predictor", page_icon="🚦", layout="wide")
 st.title("🚦 Accident Severity Prediction")
 st.write("This tool helps assess accident severity based on various conditions.")
 
