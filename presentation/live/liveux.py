@@ -30,9 +30,9 @@ def preprocess_input(user_input, scaler, feature_names):
         df['day_cos'] = np.cos(2 * np.pi * df['day'] / 31)
         df['month_sin'] = np.sin(2 * np.pi * df['month'] / 12)
         df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
-        df.drop(columns=['day', 'month'], inplace=True)
+        df.drop(columns=['day', 'month', 'time'], inplace=True)
         
-        numerical_features = ['lat', 'long', 'maximum_speed', 'age', 'day_sin', 'day_cos']
+        numerical_features = ['lat', 'long', 'maximum_speed', 'age']
         df = df.reindex(columns=numerical_features, fill_value=0)
         df[numerical_features] = scaler.transform(df[numerical_features])
         df = df[feature_names]
