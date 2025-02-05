@@ -782,13 +782,6 @@ def part_3():
     """)
 
 def part_4():
-    st.header("Live Demo")
-
-    # Title and Introduction
-
-import liveux  
-
-def part_4():
     #Run liveux.py as a separate process
     os.system("streamlit run liveux.py")
             
