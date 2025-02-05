@@ -789,8 +789,8 @@ def part_4():
 import liveux  
 
 def part_4():
-    # Run liveux.py as a separate process
-    os.system("streamlit run liveux.py")  
-        
+    #Run liveux.py as a separate process
+    os.system("streamlit run liveux.py")
+            
 if __name__ == "__main__":
     main()
