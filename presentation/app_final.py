@@ -18,11 +18,13 @@ from sklearn.model_selection import train_test_split
 import gzip
 import pickle
 
-# Load the compressed dataset
-file_path = "data.pkl.gz"
+# Load the uncompressed dataset
+file_path = "data.pkl"
 
-with gzip.open(file_path, "rb") as f:
+with open(file_path, "rb") as f:
     data_final = pickle.load(f)
+
+# Remove duplicates
 data_final = data_final.drop_duplicates()
 
 def main():
