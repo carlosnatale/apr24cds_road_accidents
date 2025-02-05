@@ -34,17 +34,24 @@ def preprocess_input(user_input, scaler, feature_names):
         df['month_cos'] = np.cos(2 * np.pi * df['month'] / 12)
         df.drop(columns=['day', 'month', 'time'], inplace=True)
 
-        # Define numerical features
-        numerical_features = ['lat', 'long', 'maximum_speed', 'age', 'day_sin', 'day_cos', 'month_sin', 'month_cos']
-        df = df.reindex(columns=numerical_features, fill_value=0)
-        df[numerical_features] = scaler.transform(df[numerical_features])
-        
-        # Ensure alignment with model features
+        # Identify features used in StandardScaler
+        scaler_features = scaler.feature_names_in_  # Extract features from trained scaler
+
+        # Ensure only the required features are scaled
+        scaled_df = df[scaler_features].copy()  # Select only the expected features
+        scaled_df[scaler_features] = scaler.transform(scaled_df)
+
+        # Merge scaled values with the rest of the required features
+        df.update(scaled_df)
+
+        # Ensure final feature alignment with the model
         df = df.reindex(columns=feature_names, fill_value=0)
+
         return df
     except Exception as e:
         st.error(f"Error in preprocessing: {e}")
         return None
+
 
 # UI Layout
 st.title("🚦 Accident Severity Prediction")
